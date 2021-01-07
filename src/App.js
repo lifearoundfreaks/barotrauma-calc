@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   return (
-    <Router basename='/barotrauma-calc'>
+    <Router basename={process.env.PUBLIC_URL}>
       <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
         <Navbar.Brand><Link to="/" style={{textDecoration: "none", color: "white"}}>BarotraumaCalc</Link></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="mb-1" />
