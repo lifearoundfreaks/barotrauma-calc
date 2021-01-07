@@ -33,7 +33,7 @@ function InfoTable(props) {
         <tbody>
             <tr>
                 <td>Default price</td>
-                <td>{props.item.price.default}</td>
+                <td>{props.item.price ? props.item.price.default : undefined}</td>
             </tr>
             <tr>
                 <td>Can you buy it there?</td>
