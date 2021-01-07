@@ -33,7 +33,7 @@ export default function TextureLoader(props) {
             width: convertToPxString(rect.width * scaleFactor),
             height: convertToPxString(rect.height * scaleFactor),
             backgroundPosition: convertToPxString(-rect.X * scaleFactor, -rect.Y * scaleFactor),
-            backgroundImage: `url(./tilesets/${file})`,
+            backgroundImage: `url(/barotrauma-calc/tilesets/${file})`,
             backgroundSize: convertToPxString(
                 ...TEXTURE_DIMENTIONS[file].map(value => value * scaleFactor)
             ),
