@@ -1,15 +1,18 @@
-import { useLocation } from 'react-router-dom'
+import useGetParams from '../Hooks/useGetParams'
 import { Row, Col, Table } from 'react-bootstrap'
 import DefaultPage from './DefaultPage'
 import NotFoundPage from './NotFoundPage'
-import gameData from "./parsed_data.json"
+import gameData from "../parsed_data.json"
 import TextureLoader from './TextureLoader'
 
-function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
+const InfoTable = props => {
 
-function InfoTable(props) {
+    let soldEverywhere =
+        props.item.price &&
+        props.item.price.soldeverywhere !== undefined &&
+        props.item.price.soldeverywhere !== "false"
+        ? "yes" : "no"
+
     return <Table striped bordered hover variant="dark">
         <thead>
             <tr>
@@ -36,8 +39,8 @@ function InfoTable(props) {
                 <td>{props.item.price ? props.item.price.default : undefined}</td>
             </tr>
             <tr>
-                <td>Can you buy it there?</td>
-                <td>{props.item.soldeverywhere ? 'yes' : 'no'}</td>
+                <td>Can you buy it everywhere?</td>
+                <td>{soldEverywhere}</td>
             </tr>
         </tbody>
     </Table>
@@ -45,9 +48,9 @@ function InfoTable(props) {
 
 export default function PageContents() {
 
-    let query = useQuery()
+    const getParams = useGetParams()[0]
 
-    let identifier = query.get('identifier')
+    let identifier = getParams.identifier
     if (identifier === null) return <DefaultPage />
 
     let gameItem = gameData[identifier]

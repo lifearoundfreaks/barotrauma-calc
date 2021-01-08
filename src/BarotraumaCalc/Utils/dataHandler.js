@@ -1,4 +1,4 @@
-import gameData from "./parsed_data.json"
+import gameData from "../parsed_data.json"
   
 const getAggregatedOptions = (rawItems) => {
     return Object.entries(rawItems).map(([key, value]) => {

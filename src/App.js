@@ -1,10 +1,11 @@
 import { Container, Row, Col, Navbar } from 'react-bootstrap'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-import { SearchBar, PageContents } from './BarotraumaCalc'
+import { SearchBar, RelationshipInput, OutpostSelect, PageContents } from './BarotraumaCalc'
 import './App.css';
 
-function App() {
+export default function App() {
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
@@ -12,6 +13,8 @@ function App() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="mb-1" />
         <Navbar.Collapse id="basic-navbar-nav">
         <SearchBar />
+        <RelationshipInput />
+        <OutpostSelect />
         </Navbar.Collapse>
       </Navbar>
       <Container className="pt-4 bg-white">
@@ -29,5 +32,3 @@ function App() {
     </Router>
   )
 }
-
-export default App
