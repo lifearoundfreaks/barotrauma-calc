@@ -1,7 +1,6 @@
 import useGetParams from '../Hooks/useGetParams'
 import { Row, Col, Table } from 'react-bootstrap'
 import DefaultPage from './DefaultPage'
-import NotFoundPage from './NotFoundPage'
 import gameData from "../parsed_data.json"
 import TextureLoader from './TextureLoader'
 
@@ -51,10 +50,8 @@ export default function PageContents() {
     const getParams = useGetParams()[0]
 
     let identifier = getParams.identifier
-    if (identifier === null) return <DefaultPage />
-
+    if (identifier === undefined) return <DefaultPage />
     let gameItem = gameData[identifier]
-    if (gameItem === undefined) return <NotFoundPage />
     return <>
         <Row>
             <Col><h4>{gameItem.display_name}</h4></Col>
