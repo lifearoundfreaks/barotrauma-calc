@@ -1,13 +1,13 @@
 import useGetParams from '../Hooks/useGetParams'
 
+const validateInput = input => Math.max(Math.min(parseInt(input) || 0, 100), -100)
+
 export default function RelationshipInput() {
 
   const [getParams, pushGetParams] = useGetParams()
 
   const updateRelations = e => {
-    e.target.value = Math.max(Math.min(
-      parseInt(e.target.value) || 0, 100
-    ), -100)
+    e.target.value = validateInput(e.target.value)
     pushGetParams({ relations: e.target.value === "0" ? undefined : e.target.value })
   }
 
@@ -26,6 +26,6 @@ export default function RelationshipInput() {
       }}
       onInput={updateRelations}
       placeholder="Relations"
-      value={getParams.relations || ""}
+      value={validateInput(getParams.relations) || ""}
     /></div>
 }
