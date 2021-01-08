@@ -13,6 +13,9 @@ const TEXTURE_DIMENTIONS = {
     "Medicines.png": [512, 512],
     "pets.png": [512, 512],
     "weapons_new.png": [512, 512],
+    "OutfitIcons.png": [512, 512],
+    "MiscJobGear": [1024, 1024],
+    "headgears.png": [512, 512],
 }
 
 const convertToPxString = (...dimentions) => dimentions.map(
