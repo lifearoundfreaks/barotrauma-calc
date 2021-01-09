@@ -1,7 +1,7 @@
 import { Container, Row, Col, Navbar } from 'react-bootstrap'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { SearchBar, RelationshipInput, OutpostSelect, PageContents } from './BarotraumaCalc'
+import { SearchBar, RelationshipInput, OutpostSelect, PageContents, BrandNavLogo } from './BarotraumaCalc'
 import './App.css';
 
 export default function App() {
@@ -9,7 +9,7 @@ export default function App() {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
-        <Navbar.Brand><Link to="/" style={{textDecoration: "none", color: "white"}}>BarotraumaCalc</Link></Navbar.Brand>
+        <BrandNavLogo />
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="mb-1" />
         <Navbar.Collapse id="basic-navbar-nav">
         <SearchBar />

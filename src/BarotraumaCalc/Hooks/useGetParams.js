@@ -1,6 +1,6 @@
 import { useHistory, useLocation } from "react-router-dom"
 
-export default function useGetParams(useRawQuery) {
+export default function useGetParams(returnHomeLocation) {
 
     const location = useLocation()
     const history = useHistory()
@@ -14,8 +14,10 @@ export default function useGetParams(useRawQuery) {
         history.push(`/?${query.toString()}`)
     }
 
+    if (returnHomeLocation) {query.delete('identifier')}
+
     return [
-        useRawQuery ? `/?${query.toString()}` : Object.fromEntries(query.entries()),
+        returnHomeLocation ? `/?${query.toString()}` : Object.fromEntries(query.entries()),
         useEffect
     ]
 }
