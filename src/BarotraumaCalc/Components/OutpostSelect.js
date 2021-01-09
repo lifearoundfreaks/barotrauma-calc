@@ -8,12 +8,12 @@ export default function OutpostSelect() {
   const [getParams, pushGetParams] = useGetParams()
 
   const handleChange = e => {
-    pushGetParams({outpost: e.value})
+    pushGetParams({ outpost: e.value === DEFAULT_OUTPOST_OPTION.value ? undefined : e.value })
   }
 
   return <Select
     value={OUTPOST_OPTIONS[getParams.outpost] || DEFAULT_OUTPOST_OPTION}
-    styles={generateStyles({minWidth: 120})}
+    styles={generateStyles({ minWidth: 120 })}
     theme={customThemeOverrides}
     options={Object.values(OUTPOST_OPTIONS)}
     maxMenuHeight={400}
