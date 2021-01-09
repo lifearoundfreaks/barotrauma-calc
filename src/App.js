@@ -1,7 +1,7 @@
 import { Container, Row, Col, Navbar } from 'react-bootstrap'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { SearchBar, RelationshipInput, OutpostSelect, PageContents, BrandNavLogo } from './BarotraumaCalc'
+import { SearchBar, ReputationInput, OutpostSelect, PageContents, BrandNavLogo } from './BarotraumaCalc'
 import './App.css';
 
 export default function App() {
@@ -13,7 +13,7 @@ export default function App() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="my-1" />
         <Navbar.Collapse id="basic-navbar-nav">
         <SearchBar />
-        <RelationshipInput />
+        <ReputationInput />
         <OutpostSelect />
         </Navbar.Collapse>
       </Navbar>

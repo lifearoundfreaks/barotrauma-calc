@@ -1,4 +1,4 @@
-export const DEFAULT_RELATIONS = 0
+export const DEFAULT_REPUTATION = 0
 export const OUTPOST_OPTIONS = {
     outpost: { value: 'outpost', label: 'Outpost' },
     city: { value: 'city', label: 'Colony' },
