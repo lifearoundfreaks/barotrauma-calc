@@ -8,9 +8,9 @@ export default function App() {
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
+      <Navbar bg="dark" variant="dark" expand="md" defaultExpanded >
         <BrandNavLogo />
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="mb-1" />
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className="my-1" />
         <Navbar.Collapse id="basic-navbar-nav">
         <SearchBar />
         <RelationshipInput />
