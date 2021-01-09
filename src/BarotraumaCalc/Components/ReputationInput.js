@@ -1,13 +1,12 @@
 import useGetParams from '../Hooks/useGetParams'
-
-const validateInput = input => Math.max(Math.min(parseInt(input) || 0, 100), -100)
+import validateReputation from '../Utils/validateReputation'
 
 export default function ReputationInput() {
 
   const [getParams, pushGetParams] = useGetParams()
 
   const updateReputation = e => {
-    e.target.value = validateInput(e.target.value)
+    e.target.value = validateReputation(e.target.value)
     pushGetParams({ reputation: e.target.value === "0" ? undefined : e.target.value })
   }
 
@@ -26,6 +25,6 @@ export default function ReputationInput() {
       }}
       onInput={updateReputation}
       placeholder="Reputation"
-      value={validateInput(getParams.reputation) || ""}
+      value={validateReputation(getParams.reputation) || ""}
     /></div>
 }

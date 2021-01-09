@@ -1,6 +1,7 @@
 import Select from 'react-select'
 import { generateStyles, customThemeOverrides } from '../Utils/selectTheme'
 import { OUTPOST_OPTIONS, DEFAULT_OUTPOST_OPTION } from '../globals'
+import validateOutpost from '../Utils/validateOutpost'
 import useGetParams from '../Hooks/useGetParams'
 
 export default function OutpostSelect() {
@@ -12,7 +13,7 @@ export default function OutpostSelect() {
   }
 
   return <Select
-    value={OUTPOST_OPTIONS[getParams.outpost] || DEFAULT_OUTPOST_OPTION}
+    value={validateOutpost(getParams.outpost)}
     styles={generateStyles({ minWidth: 120 })}
     theme={customThemeOverrides}
     options={Object.values(OUTPOST_OPTIONS)}
