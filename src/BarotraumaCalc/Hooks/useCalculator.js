@@ -5,7 +5,7 @@ import validateReputation from '../Utils/validateReputation'
 import validateOutpost from '../Utils/validateOutpost'
 import ClickableItem from '../Components/ClickableItem'
 
-const round = price => Math.max(Math.floor(price), 1)
+const rnd = price => Math.floor(price)
 
 const calculateItem = (item, outpost, reputation) => {
 
@@ -24,15 +24,19 @@ const calculateItem = (item, outpost, reputation) => {
     }
 
     const getBuyingPrice = item => {
-        const reputationMultiplier = 1 - reputation * .001
-        if (isSoldThere(item)) return round(
-            item.price.default * getOutpostMultiplier(item) * reputationMultiplier)
+        if (isSoldThere(item)) return Math.max(rnd(
+            rnd(
+                item.price.default * getOutpostMultiplier(item)
+            ) * (1 - reputation * .001)
+        ), 1)
     }
 
     const getSellingPrice = item => {
-        const reputationMultiplier = .8 + reputation * .0008
-        if (hasPriceData(item)) return round(
-            item.price.default * getOutpostMultiplier(item) * reputationMultiplier)
+        if (hasPriceData(item)) return Math.max(rnd(
+            rnd(
+                rnd(item.price.default * getOutpostMultiplier(item)) * .8
+            ) * (1 + reputation * .001)
+        ), 1)
     }
 
     const buyingprice = getBuyingPrice(item)
