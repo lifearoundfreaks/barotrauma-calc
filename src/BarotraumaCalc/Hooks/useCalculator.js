@@ -7,6 +7,71 @@ import ClickableItem from '../Components/ClickableItem'
 
 const round = price => Math.max(Math.floor(price), 1)
 
+const calculateItem = (item, outpost, reputation) => {
+
+    const getOutpostData = item => item.price?.modified?.[outpost]
+
+    const getOutpostMultiplier = item => getOutpostData(item)?.multiplier || 1
+
+    const hasPriceData = item => item.price?.default !== undefined
+
+    const isSoldThere = item => {
+        const outpostData = getOutpostData(item)
+        return hasPriceData(item) && (
+            (item.price.soldeverywhere !== "false") ||
+            (outpostData && (outpostData.sold !== "false"))
+        )
+    }
+
+    const getBuyingPrice = item => {
+        const reputationMultiplier = 1 - reputation * .001
+        if (isSoldThere(item)) return round(
+            item.price.default * getOutpostMultiplier(item) * reputationMultiplier)
+    }
+
+    const getSellingPrice = item => {
+        const reputationMultiplier = .8 + reputation * .0008
+        if (hasPriceData(item)) return round(
+            item.price.default * getOutpostMultiplier(item) * reputationMultiplier)
+    }
+
+    const buyingprice = getBuyingPrice(item)
+    const sellingprice = getSellingPrice(item)
+
+    const getFabricationProfit = item => Object.entries(item.fabricate || {}).reduce(
+        (sum, [id, amt]) => sum - ((getBuyingPrice(data[id])) || Infinity) * amt, 0
+    ) + (sellingprice || 0)
+
+    const getDeconstructionProfit = item => Object.entries(item.deconstruct || {}).reduce(
+        (sum, [id, amt]) => sum + ((getSellingPrice(data[id])) || 0) * amt, 0
+    ) - (buyingprice || Infinity)
+
+    const getSellFabricationProfit = item => Object.entries(item.fabricate || {}).reduce(
+        (sum, [id, amt]) => sum - ((getSellingPrice(data[id])) || 0) * amt, 0
+    ) + (sellingprice || 0)
+
+    const getSellDeconstructionProfit = item => Object.entries(item.deconstruct || {}).reduce(
+        (sum, [id, amt]) => sum + ((getSellingPrice(data[id])) || 0) * amt, 0
+    ) - (sellingprice || 0)
+
+    return {
+        buyingprice, sellingprice,
+        fabricationProfit: getFabricationProfit(item),
+        deconstructionProfit: getDeconstructionProfit(item),
+        sellFabricationProfit: getSellFabricationProfit(item),
+        sellDeconstructionProfit: getSellDeconstructionProfit(item),
+        outpostmultiplier: getOutpostMultiplier(item),
+    }
+}
+
+const ProfitText = props => {
+    if (props.profit === -Infinity) return <span>Source item(s) cannot be bought here</span>
+    const profitable = props.profit >= 0
+    return <span>{profitable ? "Profit" : "Loss"}: <b style={{
+        color: profitable ? "green" : "red"
+    }}>{profitable ? props.profit : -props.profit}</b> {props.children}</span>
+}
+
 const ItemWithAmount = props => {
     return <div>
         <b>x {props.amount}</b>
@@ -16,51 +81,16 @@ const ItemWithAmount = props => {
         /></div>
 }
 
-const FabricationBlock = props => {
-    const fabricationObj = props.item.fabricate || {}
-    return Object.keys(fabricationObj).length ? (<div className="mt-2">
-        <h5>Fabricated from:</h5>
+const BlockWithItems = props => {
+    return Object.keys(props.itemsObj || {}).length ? (
+    <div className="mt-2">
+        <h5>{props.mainText}</h5>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            {Object.entries(fabricationObj).map(
+            {Object.entries(props.itemsObj).map(
                 ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
             )}
         </div>
-    </div>) : <></>
-}
-
-const DeconstuctionBlock = props => {
-    const deconstructObj = props.item.deconstruct || {}
-    return Object.keys(deconstructObj).length ? (<div className="mt-2">
-    <h5>Deconstucted to:</h5>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            {Object.entries(deconstructObj).map(
-                ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
-            )}
-        </div>
-    </div>) : <></>
-}
-
-const UsedInBlock = props => {
-    const usedinObj = props.item.used_in || {}
-    return Object.keys(usedinObj).length ? (<div className="mt-2">
-    <h5>Used in:</h5>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            {Object.entries(usedinObj).map(
-                ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
-            )}
-        </div>
-    </div>) : <></>
-}
-
-const ScrappedFromBlock = props => {
-    const scrappedFromObj = props.item.scrapped_from || {}
-    return Object.keys(scrappedFromObj).length ? (<div className="mt-2">
-    <h5>Scrapped from:</h5>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            {Object.entries(scrappedFromObj).map(
-                ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
-            )}
-        </div>
+        {props.children}
     </div>) : <></>
 }
 
@@ -73,15 +103,6 @@ export default function useCalculator(identifier) {
 
     const outpost = validateOutpost(getParams.outpost).value
     const reputation = validateReputation(getParams.reputation)
-    const outpostData = item.price?.modified?.[outpost]
-    const hasPriceData = item.price?.default !== undefined
-    const isSoldThere = (
-        hasPriceData && (
-            (item.price.soldeverywhere !== "false") ||
-            (outpostData && (outpostData.sold !== "false"))
-        )
-    )
-    const outpostMultiplier = outpostData?.multiplier || 1
 
     const getImage = item => {
         return <TextureLoader
@@ -92,28 +113,20 @@ export default function useCalculator(identifier) {
         />
     }
 
-    const getBuyingPrice = () => {
-        const reputationMultiplier = 1 - reputation * .001
-        if (isSoldThere) return round(
-            item.price.default * outpostMultiplier * reputationMultiplier)
-    }
-
-    const getSellingPrice = () => {
-        const reputationMultiplier = .8 + reputation * .0008
-        if (hasPriceData) return round(
-            item.price.default * outpostMultiplier * reputationMultiplier)
-    }
-
+    const calcData = calculateItem(item, outpost, reputation)
     return {
         displayName: item.display_name,
-        buyingprice: getBuyingPrice(item),
-        sellingprice: getSellingPrice(item),
-        outpostmultiplier: outpostMultiplier,
-        // They are almost identical, maybe factor it out as one component?
-        fabricationBlock: <FabricationBlock item={item} />,
-        deconstuctionBlock: <DeconstuctionBlock item={item} />,
-        usedinBlock: <UsedInBlock item={item} />,
-        scrappedfromBlock: <ScrappedFromBlock item={item} />,
+        ...calcData,
+        fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
+            <ProfitText profit={calcData.fabricationProfit}>(when you buy the ingredients)</ProfitText><br />
+            <ProfitText profit={calcData.sellFabricationProfit}>(when you have the ingredients)</ProfitText>
+        </BlockWithItems>,
+        deconstuctionBlock: <BlockWithItems itemsObj={item.deconstruct} mainText="Deconstructed to">
+            <ProfitText profit={calcData.deconstructionProfit}>(when you buy the item)</ProfitText><br />
+            <ProfitText profit={calcData.sellDeconstructionProfit}>(when you have the item)</ProfitText>
+        </BlockWithItems>,
+        usedinBlock: <BlockWithItems itemsObj={item.used_in} mainText="Used in" />,
+        scrappedfromBlock: <BlockWithItems itemsObj={item.scrapped_from} mainText="Scrapped from" />,
         image: getImage(item),
     }
 }
