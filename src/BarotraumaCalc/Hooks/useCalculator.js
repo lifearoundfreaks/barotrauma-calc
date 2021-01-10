@@ -83,15 +83,15 @@ const ItemWithAmount = props => {
 
 const BlockWithItems = props => {
     return Object.keys(props.itemsObj || {}).length ? (
-    <div className="mt-2">
-        <h5>{props.mainText}</h5>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            {Object.entries(props.itemsObj).map(
-                ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
-            )}
-        </div>
-        {props.children}
-    </div>) : <></>
+        <div className="mt-2">
+            <h5>{props.mainText}</h5>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
+                {Object.entries(props.itemsObj).map(
+                    ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
+                )}
+            </div>
+            {props.children}
+        </div>) : <></>
 }
 
 export default function useCalculator(identifier) {
@@ -116,6 +116,9 @@ export default function useCalculator(identifier) {
     const calcData = calculateItem(item, outpost, reputation)
     return {
         displayName: item.display_name,
+        fabricateTime: item.fabricate_time,
+        deconstructTime: item.deconstruct_time,
+        skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
             <ProfitText profit={calcData.fabricationProfit}>(when you buy the ingredients)</ProfitText><br />

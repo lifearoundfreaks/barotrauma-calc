@@ -3,6 +3,14 @@ import { Row, Col, Table } from 'react-bootstrap'
 import DefaultPage from './DefaultPage'
 import useCalculator from '../Hooks/useCalculator'
 
+const TableData = props => {
+    return props.value !== props.missingValue ?
+        <tr>
+            <td>{props.children}</td>
+            <td>{props.value}</td>
+        </tr> : <></>
+}
+
 const InfoTable = props => {
 
     return <Table striped bordered hover variant="dark">
@@ -19,18 +27,12 @@ const InfoTable = props => {
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Buying price</td>
-                <td>{props.calculator.buyingprice}</td>
-            </tr>
-            <tr>
-                <td>Selling price</td>
-                <td>{props.calculator.sellingprice}</td>
-            </tr>
-            <tr>
-                <td>Local multiplier</td>
-                <td>{props.calculator.outpostmultiplier}</td>
-            </tr>
+            <TableData value={props.calculator.buyingprice}>Buying price</TableData>
+            <TableData value={props.calculator.sellingprice}>Selling price</TableData>
+            <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Local multiplier</TableData>
+            <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
+            <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
+            <TableData value={props.calculator.skills} missingValue={""}>Fabrication skills</TableData>
         </tbody>
     </Table>
 }
