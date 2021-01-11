@@ -38,7 +38,7 @@ export default function App() {
           </Col>
         </Row>
         <Row className="footer">
-          <Col className="text-muted py-4">I do not claim any rights to images and data used.
+          <Col className="text-muted py-4"><hr />I do not claim any rights to images and data used.
             This is simply a convenience tool for the game
             called <a href="https://store.steampowered.com/app/602960/Barotrauma/">Barotrauma</a> (v0.11.0.10).</Col>
         </Row>

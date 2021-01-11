@@ -60,6 +60,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
 
     return {
         buyingprice, sellingprice,
+        minAmt: getOutpostData(item, outpost).min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ? undefined : sellingprice - buyingprice,
         fabricationProfit: getFabricationProfit(item),
         deconstructionProfit: getDeconstructionProfit(item),
@@ -129,12 +130,20 @@ export default function useCalculator(identifier) {
         skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
-            <ProfitText profit={calcData.fabricationProfit}><small>(when you buy at departure and sell at destination)</small></ProfitText><br />
-            <ProfitText profit={calcData.sellFabricationProfit}><small>(when you find the ingredients en route)</small></ProfitText>
+            <ProfitText profit={calcData.fabricationProfit}><br />
+                <small className="text-muted">(when you buy at departure and sell at destination)</small>
+            </ProfitText><br />
+            <ProfitText profit={calcData.sellFabricationProfit}><br />
+                <small className="text-muted">(when you find the ingredients en route)</small>
+            </ProfitText>
         </BlockWithItems>,
         deconstuctionBlock: <BlockWithItems itemsObj={item.deconstruct} mainText="Deconstructed to">
-            <ProfitText profit={calcData.deconstructionProfit}><small>(when you buy at departure and sell at destination)</small></ProfitText><br />
-            <ProfitText profit={calcData.sellDeconstructionProfit}><small>(when you find the item en route)</small></ProfitText>
+            <ProfitText profit={calcData.deconstructionProfit}><br />
+                <small className="text-muted">(when you buy at departure and sell at destination)</small>
+            </ProfitText><br />
+            <ProfitText profit={calcData.sellDeconstructionProfit}><br />
+                <small className="text-muted">(when you find the item en route)</small>
+            </ProfitText>
         </BlockWithItems>,
         usedinBlock: <BlockWithItems itemsObj={item.used_in} mainText="Used in" />,
         scrappedfromBlock: <BlockWithItems itemsObj={item.scrapped_from} mainText="Scrapped from" />,

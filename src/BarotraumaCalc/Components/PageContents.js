@@ -27,9 +27,10 @@ const InfoTable = props => {
             </tr>
         </thead>
         <tbody>
-            <TableData value={props.calculator.tradingProfit}>Trading profit</TableData>
+            <TableData value={props.calculator.tradingProfit}>Trading margin</TableData>
             <TableData value={props.calculator.buyingprice}>Buying price</TableData>
             <TableData value={props.calculator.sellingprice}>Selling price</TableData>
+            <TableData value={props.calculator.minAmt}>Minimal amount sold at departure</TableData>
             <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Departure multiplier</TableData>
             <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
             <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
