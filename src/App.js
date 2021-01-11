@@ -8,13 +8,27 @@ export default function App() {
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <Navbar bg="dark" variant="dark" expand="md" defaultExpanded >
+      <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
         <BrandNavLogo />
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="my-1" />
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className="mt-3" />
         <Navbar.Collapse id="basic-navbar-nav">
         <SearchBar />
+        <div style={{display: 'flex', flexBasis: 250, flexGrow: 0, flexDirection: "column"}}>
+          <div><b style={{color: "white"}}>
+            Departure
+          </b></div>
+          <div style={{display: 'flex', flexGrow: 1}}>
+        <OutpostSelect/>
         <ReputationInput />
-        <OutpostSelect />
+        </div></div>
+        <div style={{display: 'flex', flexBasis: 250, flexGrow: 0, flexDirection: "column"}}>
+          <div><b style={{color: "white"}}>
+            Destination
+          </b></div>
+          <div style={{display: 'flex', flexGrow: 1}}>
+        <OutpostSelect getParamName="destoutpost"/>
+        <ReputationInput getParamName="destreputation" />
+        </div></div>
         </Navbar.Collapse>
       </Navbar>
       <Container className="pt-4 bg-white">

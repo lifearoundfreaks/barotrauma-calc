@@ -60,10 +60,10 @@ export default function SearchBar() {
     onChange={handleChange}
     components={{ Option: iconOption, DropdownIndicator: () => null, IndicatorSeparator: () => null }}
     menuIsOpen={menuIsOpen}
-    placeholder="Search for game items by name"
+    placeholder="Search for items by name"
     noOptionsMessage={() => "No items were found."}
     filterOption={createFilter({ stringify: option => option.data.searchstring, ignoreCase: true })}
-    styles={generateStyles({flexBasis: 0, flexGrow: 1})}
+    styles={generateStyles({flexGrow: 1, marginTop: 34})}
     maxMenuHeight={400}
     theme={customThemeOverrides}
   />

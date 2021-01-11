@@ -1,19 +1,22 @@
 import useGetParams from '../Hooks/useGetParams'
 import validateReputation from '../Utils/validateReputation'
 
-export default function ReputationInput() {
+export default function ReputationInput(props) {
 
   const [getParams, pushGetParams] = useGetParams()
 
+  const getParamName = props.getParamName || "reputation"
+
   const updateReputation = e => {
     e.target.value = validateReputation(e.target.value)
-    pushGetParams({ reputation: e.target.value === "0" ? undefined : e.target.value })
+    pushGetParams({ [getParamName]: e.target.value === "0" ? undefined : e.target.value })
   }
 
   return <div style={{
     margin: 10,
-    flexBasis: 0,
     minWidth: 120,
+    flexGrow: 1,
+    flexBasis: 120,
   }}
   ><input
       type="number"
@@ -25,6 +28,6 @@ export default function ReputationInput() {
       }}
       onInput={updateReputation}
       placeholder="Reputation"
-      value={validateReputation(getParams.reputation) || ""}
+      value={validateReputation(getParams[getParamName]) || ""}
     /></div>
 }

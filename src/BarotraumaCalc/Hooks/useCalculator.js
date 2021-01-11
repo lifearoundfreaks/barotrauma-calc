@@ -7,16 +7,16 @@ import ClickableItem from '../Components/ClickableItem'
 
 const rnd = price => Math.floor(price)
 
-const calculateItem = (item, outpost, reputation) => {
+const calculateItem = (item, outpost, reputation, destoutpost, destreputation) => {
 
-    const getOutpostData = item => item.price?.modified?.[outpost]
+    const getOutpostData = (item, location) => item.price?.modified?.[location]
 
-    const getOutpostMultiplier = item => getOutpostData(item)?.multiplier || 1
+    const getOutpostMultiplier = (item, location) => getOutpostData(item, location)?.multiplier || 1
 
     const hasPriceData = item => item.price?.default !== undefined
 
     const isSoldThere = item => {
-        const outpostData = getOutpostData(item)
+        const outpostData = getOutpostData(item, outpost)
         return hasPriceData(item) && (
             (item.price.soldeverywhere !== "false") ||
             (outpostData && (outpostData.sold !== "false"))
@@ -26,7 +26,7 @@ const calculateItem = (item, outpost, reputation) => {
     const getBuyingPrice = item => {
         if (isSoldThere(item)) return Math.max(rnd(
             rnd(
-                item.price.default * getOutpostMultiplier(item)
+                item.price.default * getOutpostMultiplier(item, outpost)
             ) * (1 - reputation * .001)
         ), 1)
     }
@@ -34,8 +34,8 @@ const calculateItem = (item, outpost, reputation) => {
     const getSellingPrice = item => {
         if (hasPriceData(item)) return Math.max(rnd(
             rnd(
-                rnd(item.price.default * getOutpostMultiplier(item)) * .8
-            ) * (1 + reputation * .001)
+                rnd(item.price.default * getOutpostMultiplier(item, destoutpost)) * .8
+            ) * (1 + destreputation * .001)
         ), 1)
     }
 
@@ -60,16 +60,18 @@ const calculateItem = (item, outpost, reputation) => {
 
     return {
         buyingprice, sellingprice,
+        tradingProfit: (sellingprice === undefined || buyingprice === undefined) ? undefined : sellingprice - buyingprice,
         fabricationProfit: getFabricationProfit(item),
         deconstructionProfit: getDeconstructionProfit(item),
         sellFabricationProfit: getSellFabricationProfit(item),
         sellDeconstructionProfit: getSellDeconstructionProfit(item),
-        outpostmultiplier: getOutpostMultiplier(item),
+        outpostmultiplier: getOutpostMultiplier(item, outpost),
+        destoutpostmultiplier: getOutpostMultiplier(item, destoutpost),
     }
 }
 
 const ProfitText = props => {
-    if (props.profit === -Infinity) return <span>Source item(s) cannot be bought here</span>
+    if (props.profit === -Infinity) return <small>Source item(s) cannot be bought at departure</small>
     const profitable = props.profit >= 0
     return <span>{profitable ? "Profit" : "Loss"}: <b style={{
         color: profitable ? "green" : "red"
@@ -107,6 +109,8 @@ export default function useCalculator(identifier) {
 
     const outpost = validateOutpost(getParams.outpost).value
     const reputation = validateReputation(getParams.reputation)
+    const destoutpost = validateOutpost(getParams.destoutpost).value
+    const destreputation = validateReputation(getParams.destreputation)
 
     const getImage = item => {
         return <TextureLoader
@@ -117,7 +121,7 @@ export default function useCalculator(identifier) {
         />
     }
 
-    const calcData = calculateItem(item, outpost, reputation)
+    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation)
     return {
         displayName: item.display_name,
         fabricateTime: item.fabricate_time,
@@ -125,12 +129,12 @@ export default function useCalculator(identifier) {
         skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
-            <ProfitText profit={calcData.fabricationProfit}>(when you buy the ingredients)</ProfitText><br />
-            <ProfitText profit={calcData.sellFabricationProfit}>(when you have the ingredients)</ProfitText>
+            <ProfitText profit={calcData.fabricationProfit}><small>(when you buy at departure and sell at destination)</small></ProfitText><br />
+            <ProfitText profit={calcData.sellFabricationProfit}><small>(when you find the ingredients en route)</small></ProfitText>
         </BlockWithItems>,
         deconstuctionBlock: <BlockWithItems itemsObj={item.deconstruct} mainText="Deconstructed to">
-            <ProfitText profit={calcData.deconstructionProfit}>(when you buy the item)</ProfitText><br />
-            <ProfitText profit={calcData.sellDeconstructionProfit}>(when you have the item)</ProfitText>
+            <ProfitText profit={calcData.deconstructionProfit}><small>(when you buy at departure and sell at destination)</small></ProfitText><br />
+            <ProfitText profit={calcData.sellDeconstructionProfit}><small>(when you find the item en route)</small></ProfitText>
         </BlockWithItems>,
         usedinBlock: <BlockWithItems itemsObj={item.used_in} mainText="Used in" />,
         scrappedfromBlock: <BlockWithItems itemsObj={item.scrapped_from} mainText="Scrapped from" />,
