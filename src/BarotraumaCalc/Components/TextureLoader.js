@@ -28,7 +28,7 @@ const sourcerectToObj = dimentions => {
 }
 
 export default function TextureLoader(props) {
-    let {size, file, sourcerect, margin, ...arbitrary} = props
+    let {size, file, sourcerect, margin, offsetMargin, ...arbitrary} = props
     let rect = sourcerectToObj(sourcerect)
     let scaleFactor = (size - margin) / rect.size
     return <div
@@ -42,8 +42,8 @@ export default function TextureLoader(props) {
             ),
             float: "left",
             margin: convertToPxString(
-                margin + (rect.size - rect.height) * scaleFactor / 2,
-                margin + (rect.size - rect.width) * scaleFactor / 2
+                (offsetMargin || 0) + margin + (rect.size - rect.height) * scaleFactor / 2,
+                (offsetMargin || 0) + margin + (rect.size - rect.width) * scaleFactor / 2
             ),
             ...arbitrary,
         }}

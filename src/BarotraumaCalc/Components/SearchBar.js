@@ -11,13 +11,14 @@ const MAX_SEARCH_SUGGESTIONS = 5
 const { Option } = components;
 const iconOption = props => (
   <>
+    <Option {...props}>
     <TextureLoader
       size={OPTION_HEIGHT}
       file={props.data.texture}
       sourcerect={props.data.sourcerect}
       margin={5}
+      offsetMargin={-18}
     />
-    <Option {...props}>
       {props.data.label}
     </Option>
   </>
