@@ -8,7 +8,7 @@ export default function App() {
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded >
+      <Navbar bg="dark" variant="dark" expand="lg" defaultExpanded className="pb-4" >
         <BrandNavLogo />
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="mt-3" />
         <Navbar.Collapse id="basic-navbar-nav">
