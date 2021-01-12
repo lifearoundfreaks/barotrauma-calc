@@ -60,7 +60,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
 
     return {
         buyingprice, sellingprice,
-        minAmt: getOutpostData(item, outpost).min_amt,
+        minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
         fabricationProfit: getFabricationProfit(item),
