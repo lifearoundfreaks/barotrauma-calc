@@ -6,6 +6,25 @@ import validateOutpost from '../Utils/validateOutpost'
 import ClickableItem from '../Components/ClickableItem'
 
 const rnd = price => Math.floor(price)
+const compareItems = (a, b) => a.rating < b.rating ? 1 : a.rating === b.rating ? 0 : -1
+
+const InlineItem = props => {
+    return <div>
+        <ClickableItem
+            item={props.item}
+            identifier={props.identifier}
+        /><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
+}
+
+const RatedItems = props => {
+    return props.items.length ? <>
+        <h5 className="mb-0">{props.header}</h5><small>{props.explanation}</small>
+        <div style={{ minHeight: 120, display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
+            {props.items.sort(compareItems).map(
+                obj => <InlineItem key={obj.identifier} identifier={obj.identifier} item={obj.item} rating={obj.rating} postfix={props.postfix} />
+            )}
+        </div></> : <></>
+}
 
 const calculateItem = (item, outpost, reputation, destoutpost, destreputation) => {
 
@@ -39,34 +58,131 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
         ), 1)
     }
 
-    const buyingprice = getBuyingPrice(item)
-    const sellingprice = getSellingPrice(item)
-
-    const getFabricationProfit = item => Object.entries(item.fabricate || {}).reduce(
+    const getFabricationProfit = (item, sellingprice) => Object.entries(item.fabricate || {}).reduce(
         (sum, [id, amt]) => sum - ((getBuyingPrice(data[id])) || Infinity) * amt, 0
     ) + (sellingprice || 0)
 
-    const getDeconstructionProfit = item => Object.entries(item.deconstruct || {}).reduce(
+    const getDeconstructionProfit = (item, buyingprice) => Object.entries(item.deconstruct || {}).reduce(
         (sum, [id, amt]) => sum + ((getSellingPrice(data[id])) || 0) * amt, 0
     ) - (buyingprice || Infinity)
 
-    const getSellFabricationProfit = item => Object.entries(item.fabricate || {}).reduce(
+    const getSellFabricationProfit = (item, sellingprice) => Object.entries(item.fabricate || {}).reduce(
         (sum, [id, amt]) => sum - ((getSellingPrice(data[id])) || 0) * amt, 0
     ) + (sellingprice || 0)
 
-    const getSellDeconstructionProfit = item => Object.entries(item.deconstruct || {}).reduce(
+    const getSellDeconstructionProfit = (item, sellingprice) => Object.entries(item.deconstruct || {}).reduce(
         (sum, [id, amt]) => sum + ((getSellingPrice(data[id])) || 0) * amt, 0
     ) - (sellingprice || 0)
+
+    if (item === undefined) {
+        const [trade, fabr, sellFabr, dec, sellDec] = [[], [], [], [], []]
+
+        const usefulMats = {}
+
+        const updateUsefulMaterials = ingredients => {
+            for (const ingredientId in ingredients) {
+                let ingredient = data[ingredientId]
+                if (getBuyingPrice(ingredient)) {
+                    if (ingredientId in usefulMats) {
+                        usefulMats[ingredientId].rating += 1
+                    } else {
+                        usefulMats[ingredientId] = { item: ingredient, identifier: ingredientId, rating: 1 }
+                    }
+                }
+            }
+        }
+
+        for (const [identifier, item] of Object.entries(data)) {
+
+            let buyingprice = getBuyingPrice(item)
+            let sellingprice = getSellingPrice(item)
+            let tradeProfit = sellingprice - buyingprice
+
+            if (tradeProfit > 0) {
+                trade.push({ item, identifier, rating: Math.round(1000 * tradeProfit / buyingprice) / 10 })
+            }
+
+            let fabrProfit = item.fabricate ? Math.round(100 *
+                getFabricationProfit(item, sellingprice) / item.fabricate_time
+            ) / 100 : 0
+
+            if (fabrProfit > 0) {
+                fabr.push({ item, identifier, rating: fabrProfit })
+                updateUsefulMaterials(item.fabricate)
+
+            } else if (fabrProfit === -Infinity) {
+                fabrProfit = item.fabricate ? Math.round(100 *
+                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time
+                ) / 100 : 0
+                if (fabrProfit > 0) {
+                    sellFabr.push({ item, identifier, rating: fabrProfit })
+                    updateUsefulMaterials(item.fabricate)
+                }
+            }
+
+            let decProfit = item.deconstruct ? Math.round(100 *
+                getDeconstructionProfit(item, buyingprice) / item.deconstruct_time
+            ) / 100 : 0
+
+            if (decProfit > 0) {
+                dec.push({ item, identifier, rating: decProfit })
+
+            } else if (decProfit === -Infinity) {
+                decProfit = item.deconstruct ? Math.round(100 *
+                    getSellDeconstructionProfit(item, sellingprice) / item.deconstruct_time
+                ) / 100 : 0
+                if (decProfit > 0) {
+                    sellDec.push({ item, identifier, rating: decProfit })
+                }
+            }
+        }
+        return {
+            homepageResults: <>
+                <RatedItems
+                    items={trade}
+                    postfix="%"
+                    header="Trading investment returns"
+                    explanation="(with no crafting involved)" />
+                <RatedItems
+                    items={Object.values(usefulMats)}
+                    header="Useful crafting materials"
+                    explanation="(involved in N profitable recipes and sold here)" />
+                <RatedItems
+                    items={fabr}
+                    postfix="/s"
+                    header="Fabrication profits per fabrication time"
+                    explanation="(departure sells ingredients)" />
+                <RatedItems
+                    items={sellFabr}
+                    postfix="/s"
+                    header="Other fabrication profits"
+                    explanation="(you have to acquire the ingredients through means other than trading)" />
+                <RatedItems
+                    items={dec}
+                    postfix="/s"
+                    header="Deconstruction profits"
+                    explanation="(departure sells those items)" />
+                <RatedItems
+                    items={sellDec}
+                    postfix="/s"
+                    header="Other deconstruction profits"
+                    explanation="(you have to acquire the item through means other than trading)" />
+            </>
+        }
+    }
+
+    const buyingprice = getBuyingPrice(item)
+    const sellingprice = getSellingPrice(item)
 
     return {
         buyingprice, sellingprice,
         minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
-        fabricationProfit: getFabricationProfit(item),
-        deconstructionProfit: getDeconstructionProfit(item),
-        sellFabricationProfit: getSellFabricationProfit(item),
-        sellDeconstructionProfit: getSellDeconstructionProfit(item),
+        fabricationProfit: getFabricationProfit(item, sellingprice),
+        deconstructionProfit: getDeconstructionProfit(item, buyingprice),
+        sellFabricationProfit: getSellFabricationProfit(item, sellingprice),
+        sellDeconstructionProfit: getSellDeconstructionProfit(item, sellingprice),
         outpostmultiplier: getOutpostMultiplier(item, outpost),
         destoutpostmultiplier: getOutpostMultiplier(item, destoutpost),
     }
@@ -80,22 +196,19 @@ const ProfitText = props => {
     }}>{profitable ? props.profit : -props.profit}</b> {props.children}</span>
 }
 
-const ItemWithAmount = props => {
-    return <div>
-        <b>x {props.amount}</b>
-        <ClickableItem
-            item={data[props.identifier]}
-            identifier={props.identifier}
-        /></div>
-}
-
 const BlockWithItems = props => {
     return Object.keys(props.itemsObj || {}).length ? (
         <div className="mt-2">
             <h5>{props.mainText}</h5>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
                 {Object.entries(props.itemsObj).map(
-                    ([identifier, amount]) => <ItemWithAmount key={identifier} identifier={identifier} amount={amount} />
+                    ([identifier, amount]) =>
+                        <InlineItem
+                            key={identifier}
+                            item={data[identifier]}
+                            identifier={identifier}
+                            rating={amount}
+                            prefix="x " />
                 )}
             </div>
             {props.children}
@@ -107,23 +220,18 @@ export default function useCalculator(identifier) {
     const getParams = useGetParams()[0]
     const item = data[identifier]
 
-    if (item === undefined) return { missing: true }
 
     const outpost = validateOutpost(getParams.outpost).value
     const reputation = validateReputation(getParams.reputation)
     const destoutpost = validateOutpost(getParams.destoutpost).value
     const destreputation = validateReputation(getParams.destreputation)
 
-    const getImage = item => {
-        return <TextureLoader
-            size={100}
-            file={item.texture}
-            sourcerect={item.sourcerect}
-            margin={0}
-        />
-    }
-
     const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation)
+
+    if (item === undefined) return {
+        noItem: true,
+        ...calcData,
+    }
     return {
         displayName: item.display_name,
         fabricateTime: item.fabricate_time,
@@ -149,6 +257,11 @@ export default function useCalculator(identifier) {
         </BlockWithItems>,
         usedinBlock: <BlockWithItems itemsObj={item.used_in} mainText="Used in" />,
         scrappedfromBlock: <BlockWithItems itemsObj={item.scrapped_from} mainText="Scrapped from" />,
-        image: getImage(item),
+        image: <TextureLoader
+            size={100}
+            file={item.texture}
+            sourcerect={item.sourcerect}
+            margin={0}
+        />,
     }
 }

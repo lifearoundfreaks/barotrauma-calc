@@ -1,8 +1,9 @@
-export default function DefaultPage() {
+export default function DefaultPage(props) {
     return <>
-        <h4>What I currently plan on adding:</h4>
-        <h6>Main page calculator that will give you a summary of items which are profitable to buy for trade or crafting as well as the summary of most used ingredients in those crafts. All of that considering currently selected route.</h6>
-        <h6>Make items in  the "Used in" and "Scrapped from" blocks color coded to indicate which related crafts of the item are profitable.</h6>
-        <p>If you have found a bug or have a suggestion for me, you can <a href="https://github.com/lifearoundfreaks/barotrauma-calc/issues/new">start an issue</a>.</p>
+        {props.children}
+        <h5 className="mb-4">What I currently plan on adding</h5>
+        <p>Make items in the "Used in" and "Scrapped from" blocks color coded to indicate which related crafts of the item are profitable.</p>
+        <p>Swap button for outosts.</p>
+        <p>Main page item filtration.</p>
     </>
 }

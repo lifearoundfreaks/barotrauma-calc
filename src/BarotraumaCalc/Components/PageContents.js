@@ -46,7 +46,7 @@ export default function PageContents() {
     const getParams = useGetParams()[0]
     const identifier = getParams.identifier
     const calculatorResults = useCalculator(identifier)
-    if (calculatorResults.missing) return <DefaultPage />
+    if (calculatorResults.noItem) return <DefaultPage>{calculatorResults.homepageResults}</DefaultPage>
 
     return <>
         <Row>
