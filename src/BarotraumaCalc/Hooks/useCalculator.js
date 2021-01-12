@@ -61,7 +61,8 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
     return {
         buyingprice, sellingprice,
         minAmt: getOutpostData(item, outpost).min_amt,
-        tradingProfit: (sellingprice === undefined || buyingprice === undefined) ? undefined : sellingprice - buyingprice,
+        tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
+            undefined : sellingprice - buyingprice,
         fabricationProfit: getFabricationProfit(item),
         deconstructionProfit: getDeconstructionProfit(item),
         sellFabricationProfit: getSellFabricationProfit(item),
@@ -127,6 +128,7 @@ export default function useCalculator(identifier) {
         displayName: item.display_name,
         fabricateTime: item.fabricate_time,
         deconstructTime: item.deconstruct_time,
+        fabricatorTypes: item.fabricator_types?.split(",").join("; "),
         skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
