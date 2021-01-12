@@ -19,7 +19,7 @@ const InlineItem = props => {
 const RatedItems = props => {
     return props.items.length ? <>
         <h5 className="mb-0">{props.header}</h5><small>{props.explanation}</small>
-        <div style={{ minHeight: 120, display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
+        <div className="py-4" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
             {props.items.sort(compareItems).map(
                 obj => <InlineItem key={obj.identifier} identifier={obj.identifier} item={obj.item} rating={obj.rating} postfix={props.postfix} />
             )}
