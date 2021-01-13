@@ -1,6 +1,5 @@
 import useGetParams from '../Hooks/useGetParams'
 import { Row, Col, Table } from 'react-bootstrap'
-import DefaultPage from './DefaultPage'
 import useCalculator from '../Hooks/useCalculator'
 
 const TableData = props => {
@@ -33,7 +32,7 @@ const InfoTable = props => {
             <TableData value={props.calculator.minAmt}>Minimal amount sold at departure</TableData>
             <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Departure multiplier</TableData>
             <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
-            <TableData value={props.calculator.fabricateTime}>Raw fabrication time</TableData>
+            <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
             <TableData value={props.calculator.fabricatorTypes}>Fabricator type(s)</TableData>
             <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
             <TableData value={props.calculator.skills} missingValue={""}>Fabrication skills</TableData>
@@ -46,7 +45,7 @@ export default function PageContents() {
     const getParams = useGetParams()[0]
     const identifier = getParams.identifier
     const calculatorResults = useCalculator(identifier)
-    if (calculatorResults.noItem) return <DefaultPage>{calculatorResults.homepageResults}</DefaultPage>
+    if (calculatorResults.noItem) return calculatorResults.homepageResults
 
     return <>
         <Row>

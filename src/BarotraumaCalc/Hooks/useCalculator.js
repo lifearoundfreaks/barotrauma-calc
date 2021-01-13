@@ -3,6 +3,8 @@ import useGetParams from './useGetParams'
 import data from "../parsed_data.json"
 import validateReputation from '../Utils/validateReputation'
 import validateOutpost from '../Utils/validateOutpost'
+import validateFabricator from '../Utils/validateFabricator'
+import validateSkill from '../Utils/validateSkill'
 import ClickableItem from '../Components/ClickableItem'
 
 const rnd = price => Math.floor(price)
@@ -27,7 +29,7 @@ const RatedItems = props => {
         </div></> : <></>
 }
 
-const calculateItem = (item, outpost, reputation, destoutpost, destreputation) => {
+const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills) => {
 
     const getOutpostData = (item, location) => item.price?.modified?.[location]
 
@@ -75,6 +77,16 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
         (sum, [id, amt]) => sum + ((getSellingPrice(data[id])) || 0) * amt, 0
     ) - (sellingprice || 0)
 
+    const getRealFabricationTime = item => {
+        if (item.skills === undefined) return item.fabricate_time / 2
+        const degreeOfSuccess = (Object.entries(item.skills).reduce(
+            (sum, [skill, level]) =>
+            sum + skills[skill] - level, 0
+        ) / Object.keys(item.skills).length + 100) / 200
+        const t = degreeOfSuccess < .5 ? degreeOfSuccess * degreeOfSuccess : degreeOfSuccess * 2
+        return item.fabricate_time / Math.max(Math.min(t, 2), .01)
+    }
+
     if (item === undefined) {
         const [trade, fabr, sellFabr, dec, sellDec] = [[], [], [], [], []]
 
@@ -104,20 +116,22 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
             }
 
             let fabrProfit = item.fabricate ? Math.round(100 *
-                getFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ? 1 : 2)
+                getFabricationProfit(item, sellingprice) / getRealFabricationTime(item)
             ) / 100 : 0
 
-            if (fabrProfit > 0) {
-                fabr.push({ item, identifier, rating: fabrProfit })
-                updateUsefulMaterials(item.fabricate)
-
-            } else if (fabrProfit === -Infinity) {
-                fabrProfit = item.fabricate ? Math.round(100 *
-                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ? 1 : 2)
-                ) / 100 : 0
+            if (fabricatortypes.value === "both" || (item.fabricator_types || "").split(",").includes(fabricatortypes.value)) {
                 if (fabrProfit > 0) {
-                    sellFabr.push({ item, identifier, rating: fabrProfit })
+                    fabr.push({ item, identifier, rating: fabrProfit })
                     updateUsefulMaterials(item.fabricate)
+
+                } else if (fabrProfit === -Infinity) {
+                    fabrProfit = item.fabricate ? Math.round(100 *
+                        getSellFabricationProfit(item, sellingprice) / getRealFabricationTime(item)
+                    ) / 100 : 0
+                    if (fabrProfit > 0) {
+                        sellFabr.push({ item, identifier, rating: fabrProfit })
+                        updateUsefulMaterials(item.fabricate)
+                    }
                 }
             }
 
@@ -179,11 +193,11 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
         return Object.fromEntries(
             Object.entries(item.used_in || {}).map(
                 ([usedInId, amount]) =>
-                    ([usedInId, {
-                        amount: amount,
-                        additionalRating: getSellFabricationProfit(
-                            data[usedInId], getSellingPrice(data[usedInId])) * amount * 2
-                    }])
+                ([usedInId, {
+                    amount: amount,
+                    additionalRating: getSellFabricationProfit(
+                        data[usedInId], getSellingPrice(data[usedInId])) * amount * 2
+                }])
             )
         )
     }
@@ -192,17 +206,18 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
         return Object.fromEntries(
             Object.entries(item.scrapped_from || {}).map(
                 ([scrappedFromId, amount]) =>
-                    ([scrappedFromId, {
-                        amount: amount,
-                        additionalRating: getSellDeconstructionProfit(
-                            data[scrappedFromId], getSellingPrice(data[scrappedFromId])) * amount * 2
-                    }])
+                ([scrappedFromId, {
+                    amount: amount,
+                    additionalRating: getSellDeconstructionProfit(
+                        data[scrappedFromId], getSellingPrice(data[scrappedFromId])) * amount * 2
+                }])
             )
         )
     }
 
     return {
         buyingprice, sellingprice,
+        fabricateTime: Math.round(100 * getRealFabricationTime(item)) / 100,
         minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
@@ -255,8 +270,16 @@ export default function useCalculator(identifier) {
     const reputation = validateReputation(getParams.reputation)
     const destoutpost = validateOutpost(getParams.destoutpost).value
     const destreputation = validateReputation(getParams.destreputation)
+    const fabricatortypes = validateFabricator(getParams.fabricator)
+    const skills = {
+        helm: validateSkill(getParams.helm),
+        weapons: validateSkill(getParams.weapons),
+        mechanical: validateSkill(getParams.mechanical),
+        electrical: validateSkill(getParams.electrical),
+        medical: validateSkill(getParams.medical),
+    }
 
-    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation)
+    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills)
 
     if (item === undefined) return {
         noItem: true,
@@ -264,7 +287,6 @@ export default function useCalculator(identifier) {
     }
     return {
         displayName: item.display_name,
-        fabricateTime: item.fabricate_time,
         deconstructTime: item.deconstruct_time,
         fabricatorTypes: item.fabricator_types?.split(",").join("; "),
         skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),

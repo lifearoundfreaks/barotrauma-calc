@@ -1,7 +1,7 @@
 import { Container, Row, Col, Navbar } from 'react-bootstrap'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { SearchBar, ReputationInput, OutpostSelect, PageContents, BrandNavLogo } from './BarotraumaCalc'
+import { SearchBar, ReputationInput, OutpostSelect, PageContents, BrandNavLogo, AdditionalFilters } from './BarotraumaCalc'
 import './App.css';
 
 export default function App() {
@@ -31,6 +31,7 @@ export default function App() {
             </div></div>
         </Navbar.Collapse>
       </Navbar>
+      <AdditionalFilters />
       <Container className="pt-4 bg-white">
         <Row>
           <Col>

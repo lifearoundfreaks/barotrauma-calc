@@ -7,3 +7,10 @@ export const OUTPOST_OPTIONS = {
     mine: { value: 'mine', label: 'Mine' },
 }
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.outpost
+export const DEFAULT_SKILL_LEVEL = 20
+export const FABRICATOR_OPTIONS = {
+    both: { value: 'both', label: 'Both' },
+    fabricator: { value: 'fabricator', label: 'Fabricator' },
+    medicalfabricator: { value: 'medicalfabricator', label: 'Medical fabricator' },
+}
+export const DEFAULT_FABRICATOR_OPTION = FABRICATOR_OPTIONS.both
