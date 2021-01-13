@@ -13,6 +13,7 @@ const InlineItem = props => {
         <ClickableItem
             item={props.item}
             identifier={props.identifier}
+            rating={props.additionalRating}
         /><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
 }
 
@@ -103,7 +104,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
             }
 
             let fabrProfit = item.fabricate ? Math.round(100 *
-                getFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ?  1 : 2)
+                getFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ? 1 : 2)
             ) / 100 : 0
 
             if (fabrProfit > 0) {
@@ -112,7 +113,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
 
             } else if (fabrProfit === -Infinity) {
                 fabrProfit = item.fabricate ? Math.round(100 *
-                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ?  1 : 2)
+                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ? 1 : 2)
                 ) / 100 : 0
                 if (fabrProfit > 0) {
                     sellFabr.push({ item, identifier, rating: fabrProfit })
@@ -160,7 +161,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
                 <RatedItems
                     items={dec}
                     postfix="/s"
-                    header="Deconstruction profits"
+                    header="Deconstruction profits per deconstruction time"
                     explanation="(departure sells those items)" />
                 <RatedItems
                     items={sellDec}
@@ -174,6 +175,32 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
     const buyingprice = getBuyingPrice(item)
     const sellingprice = getSellingPrice(item)
 
+    const getColorCodedUsedIn = () => {
+        return Object.fromEntries(
+            Object.entries(item.used_in || {}).map(
+                ([usedInId, amount]) =>
+                    ([usedInId, {
+                        amount: amount,
+                        additionalRating: getSellFabricationProfit(
+                            data[usedInId], getSellingPrice(data[usedInId])) * amount * 2
+                    }])
+            )
+        )
+    }
+
+    const getColorCodedScrappedFrom = () => {
+        return Object.fromEntries(
+            Object.entries(item.scrapped_from || {}).map(
+                ([scrappedFromId, amount]) =>
+                    ([scrappedFromId, {
+                        amount: amount,
+                        additionalRating: getSellDeconstructionProfit(
+                            data[scrappedFromId], getSellingPrice(data[scrappedFromId])) * amount * 2
+                    }])
+            )
+        )
+    }
+
     return {
         buyingprice, sellingprice,
         minAmt: getOutpostData(item, outpost)?.min_amt,
@@ -185,6 +212,8 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
         sellDeconstructionProfit: getSellDeconstructionProfit(item, sellingprice),
         outpostmultiplier: getOutpostMultiplier(item, outpost),
         destoutpostmultiplier: getOutpostMultiplier(item, destoutpost),
+        usedIn: getColorCodedUsedIn(),
+        scrappedFrom: getColorCodedScrappedFrom(),
     }
 }
 
@@ -202,12 +231,13 @@ const BlockWithItems = props => {
             <h5>{props.mainText}</h5>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
                 {Object.entries(props.itemsObj).map(
-                    ([identifier, amount]) =>
+                    ([identifier, value]) =>
                         <InlineItem
                             key={identifier}
                             item={data[identifier]}
                             identifier={identifier}
-                            rating={amount}
+                            rating={props.colorCoded ? value.amount : value}
+                            additionalRating={props.colorCoded && value.additionalRating}
                             prefix="x " />
                 )}
             </div>
@@ -255,8 +285,8 @@ export default function useCalculator(identifier) {
                 <small className="text-muted">(when you find the item en route)</small>
             </ProfitText>
         </BlockWithItems>,
-        usedinBlock: <BlockWithItems itemsObj={item.used_in} mainText="Used in" />,
-        scrappedfromBlock: <BlockWithItems itemsObj={item.scrapped_from} mainText="Scrapped from" />,
+        usedinBlock: <BlockWithItems itemsObj={calcData.usedIn} mainText="Used in" colorCoded />,
+        scrappedfromBlock: <BlockWithItems itemsObj={calcData.scrappedFrom} mainText="Scrapped from" colorCoded />,
         image: <TextureLoader
             size={100}
             file={item.texture}
