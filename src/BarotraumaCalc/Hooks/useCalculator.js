@@ -217,7 +217,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
 
     return {
         buyingprice, sellingprice,
-        fabricateTime: Math.round(100 * getRealFabricationTime(item)) / 100,
+        fabricateTime: (Math.round(100 * getRealFabricationTime(item)) / 100) || undefined,
         minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
