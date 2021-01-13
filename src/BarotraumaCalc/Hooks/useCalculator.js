@@ -103,7 +103,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
             }
 
             let fabrProfit = item.fabricate ? Math.round(100 *
-                getFabricationProfit(item, sellingprice) / item.fabricate_time
+                getFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ?  1 : 2)
             ) / 100 : 0
 
             if (fabrProfit > 0) {
@@ -112,7 +112,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation) =
 
             } else if (fabrProfit === -Infinity) {
                 fabrProfit = item.fabricate ? Math.round(100 *
-                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time
+                    getSellFabricationProfit(item, sellingprice) / item.fabricate_time * (item.skills ?  1 : 2)
                 ) / 100 : 0
                 if (fabrProfit > 0) {
                     sellFabr.push({ item, identifier, rating: fabrProfit })

@@ -33,7 +33,7 @@ const InfoTable = props => {
             <TableData value={props.calculator.minAmt}>Minimal amount sold at departure</TableData>
             <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Departure multiplier</TableData>
             <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
-            <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
+            <TableData value={props.calculator.fabricateTime}>Raw fabrication time</TableData>
             <TableData value={props.calculator.fabricatorTypes}>Fabricator type(s)</TableData>
             <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
             <TableData value={props.calculator.skills} missingValue={""}>Fabrication skills</TableData>
