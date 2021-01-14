@@ -9,8 +9,17 @@ export const OUTPOST_OPTIONS = {
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.outpost
 export const DEFAULT_SKILL_LEVEL = 20
 export const FABRICATOR_OPTIONS = {
-    both: { value: 'both', label: 'Both' },
+    all: { value: 'all', label: 'All' },
     fabricator: { value: 'fabricator', label: 'Fabricator' },
-    medicalfabricator: { value: 'medicalfabricator', label: 'Medical fabricator' },
+    medicalfabricator: { value: 'medicalfabricator', label: 'Medical Fabricator' },
 }
-export const DEFAULT_FABRICATOR_OPTION = FABRICATOR_OPTIONS.both
+export const DEFAULT_FABRICATOR_OPTION = FABRICATOR_OPTIONS.all
+export const ENGLISH_SKILL_NAMES = {
+    helm: "Helm",
+    weapons: "Weapons",
+    mechanical: "Mechanical Engineering",
+    electrical: "Electrical Engineering",
+    medical: "Medical",
+    initiative: "Initiative",
+    courage: "Courage",
+}

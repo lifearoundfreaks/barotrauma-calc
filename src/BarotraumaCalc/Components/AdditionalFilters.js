@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Accordion, Card, Button } from 'react-bootstrap'
 import Select from 'react-select'
 import { generateStyles, customThemeOverrides } from '../Utils/selectTheme'
-import { DEFAULT_SKILL_LEVEL, FABRICATOR_OPTIONS, DEFAULT_FABRICATOR_OPTION } from '../globals'
+import { DEFAULT_SKILL_LEVEL, FABRICATOR_OPTIONS, DEFAULT_FABRICATOR_OPTION, ENGLISH_SKILL_NAMES } from '../globals'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import useGetParams from '../Hooks/useGetParams'
@@ -68,7 +68,7 @@ const SkillPicker = props => {
             }}
             step={10}
             onInput={updateSkill}
-            placeholder={props.placeholder}
+            placeholder={ENGLISH_SKILL_NAMES[props.skill] || props.skill}
             value={validateSkill(getParams[getParamName]) === DEFAULT_SKILL_LEVEL ? "" : getParams[getParamName]}
             ref={inputRef}
             onWheel={onWheel}
@@ -111,11 +111,11 @@ export default function AdditionalFilters(props) {
                     <b>Allowed fabricators</b>
                     <FabricatorPicker />
                     <b>Skills (default is {DEFAULT_SKILL_LEVEL})</b>
-                    <SkillPicker skill="helm" placeholder="Helm skill" />
-                    <SkillPicker skill="weapons" placeholder="Weapons skill" />
-                    <SkillPicker skill="mechanical" placeholder="Mechanical skill" />
-                    <SkillPicker skill="electrical" placeholder="Slectrical skill" />
-                    <SkillPicker skill="medical" placeholder="Medical skill" />
+                    <SkillPicker skill="helm" />
+                    <SkillPicker skill="weapons" />
+                    <SkillPicker skill="mechanical" />
+                    <SkillPicker skill="electrical" />
+                    <SkillPicker skill="medical" />
                 </Card.Body>
             </Accordion.Collapse>
         </Card>

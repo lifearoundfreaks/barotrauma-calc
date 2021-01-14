@@ -6,6 +6,7 @@ import validateOutpost from '../Utils/validateOutpost'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import ClickableItem from '../Components/ClickableItem'
+import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
 
 const rnd = price => Math.floor(price)
 const compareItems = (a, b) => a.rating < b.rating ? 1 : a.rating === b.rating ? 0 : -1
@@ -81,7 +82,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
         if (item.skills === undefined) return item.fabricate_time / 2
         const degreeOfSuccess = (Object.entries(item.skills).reduce(
             (sum, [skill, level]) =>
-            sum + skills[skill] - level, 0
+                sum + skills[skill] - level, 0
         ) / Object.keys(item.skills).length + 100) / 200
         const t = degreeOfSuccess < .5 ? degreeOfSuccess * degreeOfSuccess : degreeOfSuccess * 2
         return item.fabricate_time / Math.max(Math.min(t, 2), .01)
@@ -119,7 +120,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
                 getFabricationProfit(item, sellingprice) / getRealFabricationTime(item)
             ) / 100 : 0
 
-            if (fabricatortypes.value === "both" || (item.fabricator_types || "").split(",").includes(fabricatortypes.value)) {
+            if (fabricatortypes.value === "all" || (item.fabricator_types || "").split(",").includes(fabricatortypes.value)) {
                 if (fabrProfit > 0) {
                     fabr.push({ item, identifier, rating: fabrProfit })
                     updateUsefulMaterials(item.fabricate)
@@ -288,8 +289,8 @@ export default function useCalculator(identifier) {
     return {
         displayName: item.display_name,
         deconstructTime: item.deconstruct_time,
-        fabricatorTypes: item.fabricator_types?.split(",").join("; "),
-        skills: Object.entries(item.skills || {}).map(([k, v]) => `${k}: ${v}`).join('; '),
+        fabricatorTypes: item.fabricator_types?.split(",").map(name => FABRICATOR_OPTIONS[name]?.label || name).join("; "),
+        skills: Object.entries(item.skills || {}).map(([k, v]) => `${ENGLISH_SKILL_NAMES[k] || k}: ${v}`).join('; '),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
             <ProfitText profit={calcData.fabricationProfit}><br />
