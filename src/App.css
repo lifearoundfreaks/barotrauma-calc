@@ -29,3 +29,6 @@ input {
 input:focus{
   outline-style: solid;
 }
+.table td {
+  vertical-align: middle;
+}

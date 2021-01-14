@@ -289,8 +289,8 @@ export default function useCalculator(identifier) {
     return {
         displayName: item.display_name,
         deconstructTime: item.deconstruct_time,
-        fabricatorTypes: item.fabricator_types?.split(",").map(name => FABRICATOR_OPTIONS[name]?.label || name).join("; "),
-        skills: Object.entries(item.skills || {}).map(([k, v]) => `${ENGLISH_SKILL_NAMES[k] || k}: ${v}`).join('; '),
+        fabricatorTypes: item.fabricator_types?.split(",").map(name => FABRICATOR_OPTIONS[name]?.label || name).join(", "),
+        skills: Object.entries(item.skills || {}).map(([k, v]) => `${ENGLISH_SKILL_NAMES[k] || k}: ${v}`).map(str => <div style={{marginBottom: 5}}>{str}</div>),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
             <ProfitText profit={calcData.fabricationProfit}><br />
