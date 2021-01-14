@@ -7,15 +7,14 @@ const TEXTURE_DIMENTIONS = {
     "containers.png": [1024, 1024],
     "CreatureLoot.png": [512, 256],
     "GrowablePlants_Temp.png": [1024, 1024],
+    "headgears.png": [512, 512],
     "InventoryIconAtlas.png": [1024, 1024],
     "InventoryIconAtlas2.png": [512, 512],
     "LootablePlants.png": [256, 512],
-    "Medicines.png": [512, 512],
+    "MiscJobGear.png": [1024, 1024],
+    "OutfitIcons.png": [512, 512],
     "pets.png": [512, 512],
     "weapons_new.png": [512, 512],
-    "OutfitIcons.png": [512, 512],
-    "MiscJobGear": [1024, 1024],
-    "headgears.png": [512, 512],
 }
 
 const convertToPxString = (...dimentions) => dimentions.map(
