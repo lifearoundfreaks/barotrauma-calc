@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Accordion, Card, Button } from 'react-bootstrap'
 import Select from 'react-select'
 import { generateStyles, customThemeOverrides } from '../Utils/selectTheme'
-import { DEFAULT_SKILL_LEVEL, FABRICATOR_OPTIONS, DEFAULT_FABRICATOR_OPTION, ENGLISH_SKILL_NAMES } from '../globals'
+import { DEFAULT_SKILL_LEVEL, FABRICATOR_OPTIONS, DEFAULT_FABRICATOR_OPTION, ENGLISH_SKILL_NAMES, DEFAULT_UPGRADE_LEVELS } from '../globals'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
+import validateUpgrades from '../Utils/validateUpgrades'
 import useGetParams from '../Hooks/useGetParams'
 import { useRef } from "react"
 
@@ -75,6 +76,43 @@ const SkillPicker = props => {
         /></div>
 }
 
+const UpgradesPicker = props => {
+
+    const [getParams, pushGetParams] = useGetParams()
+    const inputRef = useRef()
+
+    const updateUpgrades = e => {
+        e.target.value = validateUpgrades(e.target.value)
+        pushGetParams({ [props.getparam]: e.target.value === "0" ? undefined : e.target.value })
+    }
+
+    const onWheel = () => {
+        inputRef.current.blur()
+    }
+
+    return <div style={{
+        margin: 10,
+        minWidth: 120,
+        flexGrow: 1,
+        flexBasis: 120,
+    }}
+    >
+        <input
+            type="number"
+            style={{
+                width: "100%",
+                paddingLeft: 10,
+                paddingTop: 5,
+                paddingBottom: 5,
+            }}
+            onInput={updateUpgrades}
+            placeholder={props.label}
+            value={validateUpgrades(getParams[props.getparam]) === DEFAULT_UPGRADE_LEVELS ? "" : getParams[props.getparam]}
+            ref={inputRef}
+            onWheel={onWheel}
+        /></div>
+}
+
 const FabricatorPicker = () => {
 
     const [getParams, pushGetParams] = useGetParams()
@@ -116,6 +154,10 @@ export default function AdditionalFilters(props) {
                     <SkillPicker skill="mechanical" />
                     <SkillPicker skill="electrical" />
                     <SkillPicker skill="medical" />
+                    <b>Fabrication speed upgrades</b>
+                    <UpgradesPicker label="Every level increases speed by 5%" getparam="fabrlvl" />
+                    <b>Deconstruction speed upgrades</b>
+                    <UpgradesPicker label="Every level increases speed by 5%" getparam="declvl" />
                 </Card.Body>
             </Accordion.Collapse>
         </Card>

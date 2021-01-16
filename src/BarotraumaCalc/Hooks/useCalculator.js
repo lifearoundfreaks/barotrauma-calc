@@ -5,6 +5,7 @@ import validateReputation from '../Utils/validateReputation'
 import validateOutpost from '../Utils/validateOutpost'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
+import validateUpgrades from '../Utils/validateUpgrades'
 import ClickableItem from '../Components/ClickableItem'
 import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
 
@@ -30,7 +31,7 @@ const RatedItems = props => {
         </div></> : <></>
 }
 
-const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills) => {
+const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades) => {
 
     const getOutpostData = (item, location) => item.price?.modified?.[location]
 
@@ -85,8 +86,10 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
                 sum + skills[skill] - level, 0
         ) / Object.keys(item.skills).length + 100) / 200
         const t = degreeOfSuccess < .5 ? degreeOfSuccess * degreeOfSuccess : degreeOfSuccess * 2
-        return item.fabricate_time / Math.max(Math.min(t, 2), .01)
+        return item.fabricate_time / (1 + upgrades.fabricator * .05) / Math.max(Math.min(t, 2), .01)
     }
+
+    const getRealDeconstructionTime = item => item.deconstruct_time / (1 + upgrades.deconstructor * .05)
 
     if (item === undefined) {
         const [trade, fabr, sellFabr, dec, sellDec] = [[], [], [], [], []]
@@ -137,7 +140,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
             }
 
             let decProfit = item.deconstruct ? Math.round(100 *
-                getDeconstructionProfit(item, buyingprice) / item.deconstruct_time
+                getDeconstructionProfit(item, buyingprice) / getRealDeconstructionTime(item)
             ) / 100 : 0
 
             if (decProfit > 0) {
@@ -145,7 +148,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
 
             } else if (decProfit === -Infinity) {
                 decProfit = item.deconstruct ? Math.round(100 *
-                    getSellDeconstructionProfit(item, sellingprice) / item.deconstruct_time
+                    getSellDeconstructionProfit(item, sellingprice) / getRealDeconstructionTime(item)
                 ) / 100 : 0
                 if (decProfit > 0) {
                     sellDec.push({ item, identifier, rating: decProfit })
@@ -219,6 +222,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
     return {
         buyingprice, sellingprice,
         fabricateTime: (Math.round(100 * getRealFabricationTime(item)) / 100) || undefined,
+        deconstructTime: (Math.round(100 * getRealDeconstructionTime(item)) / 100) || undefined,
         minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
@@ -279,8 +283,12 @@ export default function useCalculator(identifier) {
         electrical: validateSkill(getParams.electrical),
         medical: validateSkill(getParams.medical),
     }
+    const upgrades = {
+        fabricator: validateUpgrades(getParams.fabrlvl),
+        deconstructor: validateUpgrades(getParams.declvl),
+    }
 
-    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills)
+    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades)
 
     if (item === undefined) return {
         noItem: true,
@@ -288,7 +296,6 @@ export default function useCalculator(identifier) {
     }
     return {
         displayName: item.display_name,
-        deconstructTime: item.deconstruct_time,
         fabricatorTypes: item.fabricator_types?.split(",").map(name => FABRICATOR_OPTIONS[name]?.label || name).join(", "),
         skills: Object.entries(item.skills || {}).map(([k, v]) => `${ENGLISH_SKILL_NAMES[k] || k}: ${v}`).map(str => <div style={{marginBottom: 5}}>{str}</div>),
         ...calcData,

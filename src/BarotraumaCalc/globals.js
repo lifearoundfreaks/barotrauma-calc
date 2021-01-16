@@ -23,3 +23,4 @@ export const ENGLISH_SKILL_NAMES = {
     initiative: "Initiative",
     courage: "Courage",
 }
+export const DEFAULT_UPGRADE_LEVELS = 0
