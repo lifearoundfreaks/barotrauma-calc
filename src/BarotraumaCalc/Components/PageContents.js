@@ -35,7 +35,7 @@ const InfoTable = props => {
             <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
             <TableData value={props.calculator.fabricatorTypes}>Fabricator type(s)</TableData>
             <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
-            <TableData value={props.calculator.skills} missingValue={""}>Fabrication skills</TableData>
+            <TableData value={props.calculator.skills?.length ? props.calculator.skills : undefined }>Fabrication skills</TableData>
         </tbody>
     </Table>
 }
