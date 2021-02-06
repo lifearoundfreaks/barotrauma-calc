@@ -1,5 +1,6 @@
 import TextureLoader from '../Components/TextureLoader'
 import useGetParams from '../Hooks/useGetParams'
+import { Link } from 'react-router-dom'
 
 const getRGB = value => {
     const positive = Math.min(value > 0 ? value : 0, 200)
@@ -9,15 +10,16 @@ const getRGB = value => {
 
 export default function ClickableItem(props) {
 
-    const pushGetParams = useGetParams()[1]
+    const getParams = useGetParams()[0]
     const size = 60 || props.size
 
-    const handleClick = () => {
-        pushGetParams({ identifier: props.identifier })
+    const getLink = () => {
+        let newParams = {...getParams, identifier: props.identifier}
+        return '/?' + Object.keys(newParams).map(key => key + '=' + newParams[key]).join('&');
     }
 
-    return <div
-        onClick={handleClick}
+    return <Link
+        to={getLink()}
         style={{ cursor: 'pointer', height: size, backgroundColor: props.rating && getRGB(props.rating)}}
     >
         <TextureLoader
@@ -26,5 +28,5 @@ export default function ClickableItem(props) {
             sourcerect={props.item.sourcerect}
             margin={0}
         />
-    </div>
+    </Link>
 }

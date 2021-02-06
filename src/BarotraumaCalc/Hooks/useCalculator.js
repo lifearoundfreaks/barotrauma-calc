@@ -18,7 +18,7 @@ const InlineItem = props => {
             item={props.item}
             identifier={props.identifier}
             rating={props.additionalRating}
-        /><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
+        /><br/><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
 }
 
 const RatedItems = props => {
