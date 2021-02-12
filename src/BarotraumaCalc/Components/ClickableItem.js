@@ -20,13 +20,14 @@ export default function ClickableItem(props) {
 
     return <Link
         to={getLink()}
-        style={{ cursor: 'pointer', height: size, backgroundColor: props.rating && getRGB(props.rating)}}
     >
-        <TextureLoader
-            size={size}
-            file={props.item.texture}
-            sourcerect={props.item.sourcerect}
-            margin={0}
-        />
+        <div style={{ backgroundColor: props.rating && getRGB(props.rating), height: size }}>
+            <TextureLoader
+                size={size}
+                file={props.item.texture}
+                sourcerect={props.item.sourcerect}
+                margin={0}
+            />
+        </div>
     </Link>
 }

@@ -6,6 +6,7 @@ import validateOutpost from '../Utils/validateOutpost'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import validateUpgrades from '../Utils/validateUpgrades'
+import validateStoreBalance from '../Utils/validateStoreBalance'
 import ClickableItem from '../Components/ClickableItem'
 import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
 
@@ -18,7 +19,7 @@ const InlineItem = props => {
             item={props.item}
             identifier={props.identifier}
             rating={props.additionalRating}
-        /><br/><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
+        /><b>{(props.prefix || "") + props.rating + (props.postfix || "")}</b></div>
 }
 
 const RatedItems = props => {
@@ -31,7 +32,7 @@ const RatedItems = props => {
         </div></> : <></>
 }
 
-const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades) => {
+const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier) => {
 
     const getOutpostData = (item, location) => item.price?.modified?.[location]
 
@@ -58,7 +59,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
     const getSellingPrice = item => {
         if (hasPriceData(item)) return Math.max(rnd(
             rnd(
-                rnd(item.price.default * getOutpostMultiplier(item, destoutpost)) * .8
+                rnd(item.price.default * getOutpostMultiplier(item, destoutpost)) * .8 * sellmultiplier
             ) * (1 + destreputation * .001)
         ), 1)
     }
@@ -222,7 +223,9 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
     return {
         buyingprice, sellingprice,
         fabricateTime: (Math.round(100 * getRealFabricationTime(item)) / 100) || undefined,
+        fabricationBatch: item.fabrication_batch,
         deconstructTime: (Math.round(100 * getRealDeconstructionTime(item)) / 100) || undefined,
+        randomDeconstruction: item.random_deconstruction ? "yes" : undefined,
         minAmt: getOutpostData(item, outpost)?.min_amt,
         tradingProfit: (sellingprice === undefined || buyingprice === undefined) ?
             undefined : sellingprice - buyingprice,
@@ -287,8 +290,9 @@ export default function useCalculator(identifier) {
         fabricator: validateUpgrades(getParams.fabrlvl),
         deconstructor: validateUpgrades(getParams.declvl),
     }
+    const sellmultiplier = validateStoreBalance(getParams.balance).numeric
 
-    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades)
+    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier)
 
     if (item === undefined) return {
         noItem: true,

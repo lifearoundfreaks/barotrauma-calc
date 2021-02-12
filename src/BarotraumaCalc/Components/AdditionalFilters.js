@@ -2,10 +2,19 @@ import { useState } from 'react'
 import { Accordion, Card, Button } from 'react-bootstrap'
 import Select from 'react-select'
 import { generateStyles, customThemeOverrides } from '../Utils/selectTheme'
-import { DEFAULT_SKILL_LEVEL, FABRICATOR_OPTIONS, DEFAULT_FABRICATOR_OPTION, ENGLISH_SKILL_NAMES, DEFAULT_UPGRADE_LEVELS } from '../globals'
+import {
+    DEFAULT_SKILL_LEVEL,
+    FABRICATOR_OPTIONS,
+    DEFAULT_FABRICATOR_OPTION,
+    ENGLISH_SKILL_NAMES,
+    DEFAULT_UPGRADE_LEVELS,
+    STORE_BALANCE_MULTIPLIERS,
+    DEFAULT_STORE_BALANCE_MULTIPLIER,
+} from '../globals'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import validateUpgrades from '../Utils/validateUpgrades'
+import validateStoreBalance from '../Utils/validateStoreBalance'
 import useGetParams from '../Hooks/useGetParams'
 import { useRef } from "react"
 
@@ -30,6 +39,44 @@ const OutpostSwapper = () => {
         Swap outposts
     </Button>
 }
+
+const OutpostRepeater = () => {
+    
+    const [getParams, pushGetParams] = useGetParams()
+
+    const handleClick = () => {
+        pushGetParams({
+            destoutpost: getParams.outpost,
+            destreputation: getParams.reputation,
+        })
+    }
+
+    return <Button
+        style={{ padding: "1px 5px", margin: 5, borderRadius: 0 }}
+        variant="dark"
+        onClick={handleClick}
+    >
+        Same destination
+    </Button>
+
+}
+
+const SellingPriceMultPicker = props => {
+
+        const [getParams, pushGetParams] = useGetParams()
+    
+        const handleChange = e => {
+            pushGetParams({ balance: e.value === DEFAULT_STORE_BALANCE_MULTIPLIER.value ? undefined : e.value })
+        }
+    
+        return <Select
+            value={validateStoreBalance(getParams.balance)}
+            styles={generateStyles({ flexGrow: 1, minWidth: 120, flexBasis: 120 })}
+            theme={customThemeOverrides}
+            options={Object.values(STORE_BALANCE_MULTIPLIERS)}
+            isSearchable={false}
+            onChange={handleChange} />
+    }
 
 const SkillPicker = props => {
 
@@ -139,13 +186,16 @@ export default function AdditionalFilters(props) {
                     as={Button}
                     variant="dark"
                     eventKey="additional-filters"
-                    style={{ padding: "1px 5px", borderRadius: 0 }}>
+                    style={{ padding: "1px 5px", borderRadius: 0, margin: 5 }}>
                     Toggle additional options
                 </Accordion.Toggle>
                 <OutpostSwapper />
+                <OutpostRepeater />
             </Card.Header>
             <Accordion.Collapse eventKey="additional-filters">
                 <Card.Body>
+                    <b>Sell price multiplier</b>
+                    <SellingPriceMultPicker />
                     <b>Allowed fabricators</b>
                     <FabricatorPicker />
                     <b>Skills (default is {DEFAULT_SKILL_LEVEL})</b>

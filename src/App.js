@@ -48,7 +48,7 @@ export default function App() {
         </Row>
         <Row className="footer">
           <Col className="text-muted py-4"><hr />I do not claim any rights to images and data used.
-            This is simply a convenience tool for the game called <a href="https://store.steampowered.com/app/602960/Barotrauma/">Barotrauma</a> (v0.11.0.10).<br />
+            This is simply a convenience tool for the game called <a href="https://store.steampowered.com/app/602960/Barotrauma/">Barotrauma</a> (v0.12.0.2).<br />
             If you have found a bug or have a suggestion for me, you can <a href="https://github.com/lifearoundfreaks/barotrauma-calc/issues/new">start an issue</a>.</Col>
         </Row>
       </Container>

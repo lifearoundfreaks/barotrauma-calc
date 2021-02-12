@@ -34,7 +34,9 @@ const InfoTable = props => {
             <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
             <TableData value={props.calculator.fabricateTime}>Fabrication time</TableData>
             <TableData value={props.calculator.fabricatorTypes}>Fabricator type(s)</TableData>
+            <TableData value={props.calculator.fabricationBatch} missingValue={1.}>Fabrication batch</TableData>
             <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
+            <TableData value={props.calculator.randomDeconstruction}>Deconstruction is random</TableData>
             <TableData value={props.calculator.skills?.length ? props.calculator.skills : undefined }>Fabrication skills</TableData>
         </tbody>
     </Table>
