@@ -245,7 +245,9 @@ const ProfitText = props => {
     const profitable = props.profit >= 0
     return <span>{profitable ? "Profit" : "Loss"}: <b style={{
         color: profitable ? "green" : "red"
-    }}>{profitable ? props.profit : -props.profit}</b> {props.children}</span>
+    }}>{profitable ? props.profit : -props.profit}</b> <span className="text-muted">
+        ({Math.round(props.profit/props.time*100)/100}/s) {props.children}
+    </span></span>
 }
 
 const BlockWithItems = props => {
@@ -306,18 +308,18 @@ export default function useCalculator(identifier) {
         ),
         ...calcData,
         fabricationBlock: <BlockWithItems itemsObj={item.fabricate} mainText="Fabricated from">
-            <ProfitText profit={calcData.fabricationProfit}><br />
+            <ProfitText profit={calcData.fabricationProfit} time={calcData.fabricateTime}><br />
                 <small className="text-muted">(when you buy at departure and sell at destination)</small>
             </ProfitText><br />
-            <ProfitText profit={calcData.sellFabricationProfit}><br />
+            <ProfitText profit={calcData.sellFabricationProfit} time={calcData.fabricateTime}><br />
                 <small className="text-muted">(when you find the ingredients en route)</small>
             </ProfitText>
         </BlockWithItems>,
         deconstuctionBlock: <BlockWithItems itemsObj={item.deconstruct} mainText="Deconstructed to">
-            <ProfitText profit={calcData.deconstructionProfit}><br />
+            <ProfitText profit={calcData.deconstructionProfit} time={calcData.deconstructTime}><br />
                 <small className="text-muted">(when you buy at departure and sell at destination)</small>
             </ProfitText><br />
-            <ProfitText profit={calcData.sellDeconstructionProfit}><br />
+            <ProfitText profit={calcData.sellDeconstructionProfit} time={calcData.deconstructTime}><br />
                 <small className="text-muted">(when you find the item en route)</small>
             </ProfitText>
         </BlockWithItems>,
