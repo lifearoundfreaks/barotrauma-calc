@@ -245,7 +245,7 @@ const ProfitText = props => {
     const profitable = props.profit >= 0
     return <span>{profitable ? "Profit" : "Loss"}: <b style={{
         color: profitable ? "green" : "red"
-    }}>{profitable ? props.profit : -props.profit}</b> <span className="text-muted">
+    }}>{Math.round((profitable ? props.profit : -props.profit) * 100) / 100}</b> <span className="text-muted">
         ({Math.round(props.profit/props.time*100)/100}/s) {props.children}
     </span></span>
 }
