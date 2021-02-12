@@ -223,7 +223,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
     return {
         buyingprice, sellingprice,
         fabricateTime: (Math.round(100 * getRealFabricationTime(item)) / 100) || undefined,
-        fabricationBatch: item.fabrication_batch,
+        fabricationBatch: item.fabrication_batch || 1.,
         deconstructTime: (Math.round(100 * getRealDeconstructionTime(item)) / 100) || undefined,
         randomDeconstruction: item.random_deconstruction ? "yes" : undefined,
         minAmt: getOutpostData(item, outpost)?.min_amt,
