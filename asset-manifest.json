@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/barotrauma-calc/static/css/main.d7b9a74b.chunk.css",
-    "main.js": "/barotrauma-calc/static/js/main.69bafa3e.chunk.js",
-    "main.js.map": "/barotrauma-calc/static/js/main.69bafa3e.chunk.js.map",
+    "main.js": "/barotrauma-calc/static/js/main.d5727ddb.chunk.js",
+    "main.js.map": "/barotrauma-calc/static/js/main.d5727ddb.chunk.js.map",
     "runtime-main.js": "/barotrauma-calc/static/js/runtime-main.57828ce0.js",
     "runtime-main.js.map": "/barotrauma-calc/static/js/runtime-main.57828ce0.js.map",
     "static/css/2.20aa2d7b.chunk.css": "/barotrauma-calc/static/css/2.20aa2d7b.chunk.css",
-    "static/js/2.5c802622.chunk.js": "/barotrauma-calc/static/js/2.5c802622.chunk.js",
-    "static/js/2.5c802622.chunk.js.map": "/barotrauma-calc/static/js/2.5c802622.chunk.js.map",
+    "static/js/2.f6760769.chunk.js": "/barotrauma-calc/static/js/2.f6760769.chunk.js",
+    "static/js/2.f6760769.chunk.js.map": "/barotrauma-calc/static/js/2.f6760769.chunk.js.map",
     "index.html": "/barotrauma-calc/index.html",
     "static/css/2.20aa2d7b.chunk.css.map": "/barotrauma-calc/static/css/2.20aa2d7b.chunk.css.map",
     "static/css/main.d7b9a74b.chunk.css.map": "/barotrauma-calc/static/css/main.d7b9a74b.chunk.css.map",
-    "static/js/2.5c802622.chunk.js.LICENSE.txt": "/barotrauma-calc/static/js/2.5c802622.chunk.js.LICENSE.txt"
+    "static/js/2.f6760769.chunk.js.LICENSE.txt": "/barotrauma-calc/static/js/2.f6760769.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.57828ce0.js",
     "static/css/2.20aa2d7b.chunk.css",
-    "static/js/2.5c802622.chunk.js",
+    "static/js/2.f6760769.chunk.js",
     "static/css/main.d7b9a74b.chunk.css",
-    "static/js/main.69bafa3e.chunk.js"
+    "static/js/main.d5727ddb.chunk.js"
   ]
 }
