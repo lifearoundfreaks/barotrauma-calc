@@ -9,7 +9,7 @@ const TEXTURE_DIMENTIONS = {
     "GrowablePlants_Temp.png": [1024, 1024],
     "headgears.png": [512, 512],
     "InventoryIconAtlas.png": [1024, 1024],
-    "InventoryIconAtlas2.png": [512, 512],
+    "InventoryIconAtlas2.png": [1024, 1024],
     "LootablePlants.png": [512, 512],
     "Minerals.png": [1024, 1024],
     "MiscJobGear.png": [1024, 1024],
