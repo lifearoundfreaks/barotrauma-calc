@@ -38,6 +38,7 @@ const InfoTable = props => {
             <TableData value={props.calculator.deconstructTime}>Deconstruction time</TableData>
             <TableData value={props.calculator.randomDeconstruction}>Deconstruction is random</TableData>
             <TableData value={props.calculator.skills?.length ? props.calculator.skills : undefined }>Fabrication skills</TableData>
+            <TableData value={props.calculator.minleveldifficulty}>Minimum difficulty level</TableData>
         </tbody>
     </Table>
 }

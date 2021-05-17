@@ -10,11 +10,13 @@ import {
     DEFAULT_UPGRADE_LEVELS,
     STORE_BALANCE_MULTIPLIERS,
     DEFAULT_STORE_BALANCE_MULTIPLIER,
+    DEFAULT_DIFFICULTY,
 } from '../globals'
 import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import validateUpgrades from '../Utils/validateUpgrades'
 import validateStoreBalance from '../Utils/validateStoreBalance'
+import validateDifficultyLevel from '../Utils/validateDifficultyLevel'
 import useGetParams from '../Hooks/useGetParams'
 import { useRef } from "react"
 
@@ -177,6 +179,45 @@ const FabricatorPicker = () => {
         onChange={handleChange} />
 }
 
+const LevelDifficultyPicker = () => {
+
+    const [getParams, pushGetParams] = useGetParams()
+    const inputRef = useRef()
+
+    const handleChange = e => {
+        e.target.value = validateDifficultyLevel(e.target.value)
+        pushGetParams({ difficulty: e.target.value === DEFAULT_DIFFICULTY ? undefined : e.target.value })
+    }
+
+    const onWheel = () => {
+        inputRef.current.blur()
+    }
+
+    return <div style={{
+        margin: 10,
+        minWidth: 120,
+        flexGrow: 1,
+        flexBasis: 120,
+    }}
+    >
+        <input
+            type="number"
+            step={5}
+            style={{
+                width: "100%",
+                paddingLeft: 10,
+                paddingTop: 5,
+                paddingBottom: 5,
+            }}
+            onInput={handleChange}
+            placeholder={'Difficulty %'}
+            value={validateDifficultyLevel(getParams.difficulty) === DEFAULT_DIFFICULTY ? "" : validateDifficultyLevel(getParams.difficulty)}
+            ref={inputRef}
+            onWheel={onWheel}
+        /></div>
+}
+
+
 export default function AdditionalFilters(props) {
 
     return <Accordion>
@@ -198,6 +239,8 @@ export default function AdditionalFilters(props) {
                     <SellingPriceMultPicker />
                     <b>Allowed fabricators</b>
                     <FabricatorPicker />
+                    <b>Location difficulty level (certain items are not sold at lower levels)</b>
+                    <LevelDifficultyPicker />
                     <b>Skills (default is {DEFAULT_SKILL_LEVEL})</b>
                     <SkillPicker skill="helm" />
                     <SkillPicker skill="weapons" />

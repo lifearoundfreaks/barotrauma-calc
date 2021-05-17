@@ -7,6 +7,7 @@ import validateFabricator from '../Utils/validateFabricator'
 import validateSkill from '../Utils/validateSkill'
 import validateUpgrades from '../Utils/validateUpgrades'
 import validateStoreBalance from '../Utils/validateStoreBalance'
+import validateDifficultyLevel from '../Utils/validateDifficultyLevel'
 import ClickableItem from '../Components/ClickableItem'
 import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
 
@@ -32,7 +33,7 @@ const RatedItems = props => {
         </div></> : <></>
 }
 
-const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier) => {
+const calculateItem = (item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier, leveldifficulty) => {
 
     const getOutpostData = (item, location) => item.price?.modified?.[location]
 
@@ -42,7 +43,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
 
     const isSoldThere = item => {
         const outpostData = getOutpostData(item, outpost)
-        return hasPriceData(item) && (
+        return hasPriceData(item) && item.price.minleveldifficulty <= leveldifficulty && (
             (item.price.soldeverywhere !== "false") ||
             (outpostData && (outpostData.sold !== "false"))
         )
@@ -237,6 +238,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
         destoutpostmultiplier: getOutpostMultiplier(item, destoutpost),
         usedIn: getColorCodedUsedIn(),
         scrappedFrom: getColorCodedScrappedFrom(),
+        minleveldifficulty: item.price?.minleveldifficulty || undefined,
     }
 }
 
@@ -293,8 +295,9 @@ export default function useCalculator(identifier) {
         deconstructor: validateUpgrades(getParams.declvl),
     }
     const sellmultiplier = validateStoreBalance(getParams.balance).numeric
+    const leveldifficulty = validateDifficultyLevel(getParams.difficulty)
 
-    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier)
+    const calcData = calculateItem(item, outpost, reputation, destoutpost, destreputation, fabricatortypes, skills, upgrades, sellmultiplier, leveldifficulty)
 
     if (item === undefined) return {
         noItem: true,

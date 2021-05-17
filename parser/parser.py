@@ -39,11 +39,13 @@ def parse_items(path):
         if (price := item.find('Price')) is not None:
             default_price = float(price.attrib['baseprice'])
             soldeverywhere = price.attrib.get('soldeverywhere', 'true')
+            minleveldifficulty = float(price.attrib.get('minleveldifficulty', 0))
             modified_dict = {}
             price_data = {
                 'default': default_price,
                 'soldeverywhere': soldeverywhere,
                 'modified': modified_dict,
+                'minleveldifficulty': minleveldifficulty,
             }
 
             for subprice in price:
@@ -94,7 +96,7 @@ def parse_items(path):
         if (recipe := item.find('Deconstruct')) is not None:
             quantities = defaultdict(float)
 
-            # Caltulating total weight if deconstruction is random
+            # Calculating total weight if deconstruction is random
             if (chooserandom := recipe.attrib.get("chooserandom") == "true"):
                 total_weight = sum(
                     float(ingredient.attrib['commonness']) for ingredient in [

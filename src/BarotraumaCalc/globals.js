@@ -30,3 +30,4 @@ export const ENGLISH_SKILL_NAMES = {
     courage: "Courage",
 }
 export const DEFAULT_UPGRADE_LEVELS = 0
+export const DEFAULT_DIFFICULTY = 0
