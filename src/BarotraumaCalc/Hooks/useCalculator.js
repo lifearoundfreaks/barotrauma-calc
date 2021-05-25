@@ -328,6 +328,10 @@ export default function useCalculator(identifier) {
         </BlockWithItems>,
         usedinBlock: <BlockWithItems itemsObj={calcData.usedIn} mainText="Used in" colorCoded />,
         scrappedfromBlock: <BlockWithItems itemsObj={calcData.scrappedFrom} mainText="Scrapped from" colorCoded />,
+        refilledWithBlock: <BlockWithItems itemsObj={item.refilled_with} mainText="Refilled with">
+            <small className="text-muted">(deconstruction may not yield resources</small><br />
+            <small className="text-muted">if an item is partially depleted)</small>
+        </BlockWithItems>,
         image: <TextureLoader
             size={100}
             file={item.texture}

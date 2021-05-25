@@ -61,6 +61,7 @@ export default function PageContents() {
                 {calculatorResults.deconstuctionBlock}
                 {calculatorResults.usedinBlock}
                 {calculatorResults.scrappedfromBlock}
+                {calculatorResults.refilledWithBlock}
             </Col>
         </Row>
     </>

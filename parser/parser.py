@@ -62,7 +62,8 @@ def parse_items(path):
 
             item_data['price'] = price_data
 
-        if (recipe := item.find('Fabricate')) is not None:
+        recipe, refill_recipe, *_ = (*item.findall('Fabricate'), None, None)
+        if recipe is not None:
             quantities = defaultdict(float)
             batch = float(recipe.attrib.get('amount', 1.))
             for ingredient in [
@@ -92,6 +93,17 @@ def parse_items(path):
                 item_data['fabrication_batch'] = batch
                 if skills:
                     item_data['skills'] = skills
+
+        if refill_recipe is not None:
+            quantities = defaultdict(float)
+            for ingredient in refill_recipe.findall('RequiredItem'):
+
+                nested_identifier = ingredient.attrib['identifier']
+                if item.attrib['identifier'] != nested_identifier:
+                    quantities[nested_identifier] += 1
+
+            if quantities:
+                item_data['refilled_with'] = quantities
 
         if (recipe := item.find('Deconstruct')) is not None:
             quantities = defaultdict(float)
