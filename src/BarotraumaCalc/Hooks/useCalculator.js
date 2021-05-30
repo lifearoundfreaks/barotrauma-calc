@@ -88,10 +88,10 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
                 sum + skills[skill] - level, 0
         ) / Object.keys(item.skills).length + 100) / 200
         const t = degreeOfSuccess < .5 ? degreeOfSuccess * degreeOfSuccess : degreeOfSuccess * 2
-        return item.fabricate_time / (1 + upgrades.fabricator * .05) / Math.max(Math.min(t, 2), .01)
+        return item.fabricate_time / (Math.pow(1.05, upgrades.fabricator)) / Math.max(Math.min(t, 2), .01)
     }
 
-    const getRealDeconstructionTime = item => item.deconstruct_time / (1 + upgrades.deconstructor * .05)
+    const getRealDeconstructionTime = item => item.deconstruct_time / (Math.pow(1.05, upgrades.deconstructor))
 
     if (item === undefined) {
         const [trade, fabr, sellFabr, dec, sellDec] = [[], [], [], [], []]
