@@ -1,6 +1,6 @@
 import TextureLoader from '../Components/TextureLoader'
 import useGetParams from './useGetParams'
-import data from "../parsed_data.json"
+import gameData from "../parsed_data.json"
 import validateReputation from '../Utils/validateReputation'
 import validateOutpost from '../Utils/validateOutpost'
 import validateFabricator from '../Utils/validateFabricator'
@@ -11,6 +11,7 @@ import validateDifficultyLevel from '../Utils/validateDifficultyLevel'
 import ClickableItem from '../Components/ClickableItem'
 import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
 
+const data = gameData.items
 const rnd = price => Math.floor(price)
 const compareItems = (a, b) => a.rating < b.rating ? 1 : a.rating === b.rating ? 0 : -1
 

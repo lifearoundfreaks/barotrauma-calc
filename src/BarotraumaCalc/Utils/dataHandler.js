@@ -12,7 +12,7 @@ const getAggregatedOptions = (rawItems) => {
     })
 }
 
-const aggregatedOptions = getAggregatedOptions(gameData)
+const aggregatedOptions = getAggregatedOptions(gameData.items)
 
 export const getOptionsIterator = () => {
     return aggregatedOptions[Symbol.iterator]()
