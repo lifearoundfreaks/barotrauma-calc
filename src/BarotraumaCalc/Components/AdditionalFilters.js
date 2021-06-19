@@ -89,7 +89,7 @@ const SkillPicker = props => {
     const getParamName = props.skill
 
     const updateSkill = e => {
-        if (parseInt(previousValue) === DEFAULT_SKILL_LEVEL && (e.target.value === "10" || e.target.value === "-10")) {
+        if (parseInt(previousValue) === DEFAULT_SKILL_LEVEL && (e.target.value === "5" || e.target.value === "-5")) {
             e.target.value = DEFAULT_SKILL_LEVEL + parseInt(e.target.value)
         }
         e.target.value = validateSkill(e.target.value)
@@ -116,7 +116,7 @@ const SkillPicker = props => {
                 paddingTop: 5,
                 paddingBottom: 5,
             }}
-            step={10}
+            step={5}
             onInput={updateSkill}
             placeholder={ENGLISH_SKILL_NAMES[props.skill] || props.skill}
             value={validateSkill(getParams[getParamName]) === DEFAULT_SKILL_LEVEL ? "" : getParams[getParamName]}

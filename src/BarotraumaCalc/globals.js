@@ -13,7 +13,8 @@ export const OUTPOST_OPTIONS = {
     mine: { value: 'mine', label: 'Mine' },
 }
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.city
-export const DEFAULT_SKILL_LEVEL = 20
+export const DEFAULT_SKILL_LEVEL = 15
+export const MAX_SKILL_LEVEL = 100
 export const FABRICATOR_OPTIONS = {
     all: { value: 'all', label: 'All' },
     fabricator: { value: 'fabricator', label: 'Fabricator' },
