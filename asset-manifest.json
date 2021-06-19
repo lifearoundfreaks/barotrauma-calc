@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/barotrauma-calc/static/css/main.cd61284d.chunk.css",
-    "main.js": "/barotrauma-calc/static/js/main.aa656855.chunk.js",
-    "main.js.map": "/barotrauma-calc/static/js/main.aa656855.chunk.js.map",
+    "main.js": "/barotrauma-calc/static/js/main.7c4ada6c.chunk.js",
+    "main.js.map": "/barotrauma-calc/static/js/main.7c4ada6c.chunk.js.map",
     "runtime-main.js": "/barotrauma-calc/static/js/runtime-main.57828ce0.js",
     "runtime-main.js.map": "/barotrauma-calc/static/js/runtime-main.57828ce0.js.map",
     "static/css/2.20aa2d7b.chunk.css": "/barotrauma-calc/static/css/2.20aa2d7b.chunk.css",
@@ -18,6 +18,6 @@
     "static/css/2.20aa2d7b.chunk.css",
     "static/js/2.445e074e.chunk.js",
     "static/css/main.cd61284d.chunk.css",
-    "static/js/main.aa656855.chunk.js"
+    "static/js/main.7c4ada6c.chunk.js"
   ]
 }
