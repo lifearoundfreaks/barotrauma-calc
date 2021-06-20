@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Accordion, Card, Button } from 'react-bootstrap'
+import { useState, useContext } from 'react'
+import { Accordion, Card, Button, AccordionContext, useAccordionToggle } from 'react-bootstrap'
 import Select from 'react-select'
 import { generateStyles, customThemeOverrides } from '../Utils/selectTheme'
 import {
@@ -229,16 +229,31 @@ const LevelDifficultyPicker = () => {
 
 export default function AdditionalFilters(props) {
 
+    function ShowOptionsToggle({ children, eventKey, callback }) {
+        const currentEventKey = useContext(AccordionContext);
+
+        const decoratedOnClick = useAccordionToggle(
+            eventKey,
+            () => callback && callback(eventKey),
+        );
+
+        const isCurrentEventKey = currentEventKey === eventKey;
+
+        return (
+            <Button
+                style={{ padding: "1px 5px", margin: 5, borderRadius: 0 }}
+                variant="dark"
+                onClick={decoratedOnClick}
+            >
+                {isCurrentEventKey ? "Hide options" : "Additional options"}
+            </Button>
+        )
+    }
+
     return <Accordion>
         <Card>
             <Card.Header style={{ padding: 5 }}>
-                <Accordion.Toggle
-                    as={Button}
-                    variant="dark"
-                    eventKey="additional-filters"
-                    style={{ padding: "1px 5px", borderRadius: 0, margin: 5 }}>
-                    Toggle additional options
-                </Accordion.Toggle>
+                <ShowOptionsToggle eventKey="additional-filters" />
                 <OutpostSwapper />
                 <OutpostRepeater />
             </Card.Header>
