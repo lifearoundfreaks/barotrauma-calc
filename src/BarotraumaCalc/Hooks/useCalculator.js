@@ -9,7 +9,13 @@ import validateUpgrades from '../Utils/validateUpgrades'
 import validateStoreBalance from '../Utils/validateStoreBalance'
 import validateDifficultyLevel from '../Utils/validateDifficultyLevel'
 import ClickableItem from '../Components/ClickableItem'
-import { ENGLISH_SKILL_NAMES, FABRICATOR_OPTIONS } from '../globals'
+import {
+    ENGLISH_SKILL_NAMES,
+    FABRICATOR_OPTIONS,
+    BASE_MULTIPLIER_OPTION,
+    LOWEST_MULTIPLIER_OPTION,
+    HIGHEST_MULTIPLIER_OPTION,
+} from '../globals'
 
 const data = gameData.items
 const rnd = price => Math.floor(price)
@@ -38,11 +44,25 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
 
     const getOutpostData = (item, location) => item.price?.modified?.[location]
 
-    const getOutpostMultiplier = (item, location) => getOutpostData(item, location)?.multiplier || 1
+    const getOutpostMultiplier = (item, location) => {
+        const price_data = item.price
+        if (price_data === undefined) return 1
+
+        if (location === LOWEST_MULTIPLIER_OPTION.value) return price_data.min_multiplier
+        else if (location === HIGHEST_MULTIPLIER_OPTION.value) return price_data.max_multiplier
+        else return price_data.modified?.[location]?.multiplier || 1
+    }
 
     const hasPriceData = item => item.price?.default !== undefined
 
     const isSoldThere = item => {
+        if (
+            outpost === BASE_MULTIPLIER_OPTION.value ||
+            outpost === LOWEST_MULTIPLIER_OPTION.value ||
+            outpost === HIGHEST_MULTIPLIER_OPTION.value
+        ) {
+            return item.price?.soldsomewhere === "true"
+        }
         const outpostData = getOutpostData(item, outpost)
         return hasPriceData(item) && item.price.minleveldifficulty <= leveldifficulty && (
             (item.price.soldeverywhere !== "false") ||

@@ -16,7 +16,7 @@ export default function OutpostSelect(props) {
 
   return <Select
     value={validateOutpost(getParams[getParamName])}
-    styles={generateStyles({flexGrow: 1, minWidth: 120, flexBasis: 120})}
+    styles={generateStyles({flexGrow: 1, minWidth: 120, flexBasis: 120}, {padding: 8})}
     theme={customThemeOverrides}
     options={Object.values(OUTPOST_OPTIONS)}
     maxMenuHeight={400}

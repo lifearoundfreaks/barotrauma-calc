@@ -1,11 +1,12 @@
 
 export const OPTION_HEIGHT = 56
 
-export const generateStyles = (customProvided) => {
+export const generateStyles = (containerProvided, optionProvided) => {
     return {
         option: provided => ({
             ...provided,
             padding: (OPTION_HEIGHT - 18) / 2,
+            ...optionProvided,
         }),
         control: provided => ({
             ...provided,
@@ -14,7 +15,7 @@ export const generateStyles = (customProvided) => {
         container: provided => ({
             ...provided,
             margin: 10,
-            ...customProvided,
+            ...containerProvided,
         })
     }
 }

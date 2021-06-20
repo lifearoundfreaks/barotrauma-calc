@@ -49,18 +49,31 @@ def parse_items(path):
                 'minleveldifficulty': minleveldifficulty,
             }
 
+            soldsomewhere = soldeverywhere
+            max_multiplier = min_multiplier = 1
             for subprice in price:
+                local_multiplier = float(subprice.attrib.get('multiplier', 1))
+                max_multiplier = max(max_multiplier, local_multiplier)
+                min_multiplier = min(min_multiplier, local_multiplier)
                 modified_dict[subprice.attrib['locationtype']] = {
-                    'multiplier': float(subprice.attrib.get('multiplier', 1)),
+                    'multiplier': local_multiplier,
                 }
                 min_amt = int(subprice.attrib.get('minavailable', 0))
                 if min_amt:
                     modified_dict[subprice.attrib['locationtype']][
                         'min_amt'] = min_amt
                 if soldeverywhere != 'true':
+                    sold_there = subprice.attrib.get('sold', 'true')
+                    if sold_there == 'true':
+                        soldsomewhere = True
                     modified_dict[subprice.attrib['locationtype']]['sold'] = \
-                        subprice.attrib.get('sold', 'true')
+                        sold_there
 
+            price_data.update({
+                'soldsomewhere': soldsomewhere,
+                'max_multiplier': max_multiplier,
+                'min_multiplier': min_multiplier,
+            })
             item_data['price'] = price_data
 
         recipe, refill_recipe, *_ = (*item.findall('Fabricate'), None, None)

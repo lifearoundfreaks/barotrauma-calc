@@ -11,8 +11,14 @@ export const OUTPOST_OPTIONS = {
     research: { value: 'research', label: 'Research' },
     military: { value: 'military', label: 'Military' },
     mine: { value: 'mine', label: 'Mine' },
+    base: { value: 'base', label: 'Default price' },
+    lowest: { value: 'lowest', label: 'Lowest price' },
+    highest: { value: 'highest', label: 'Highest price' },
 }
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.city
+export const BASE_MULTIPLIER_OPTION = OUTPOST_OPTIONS.base
+export const LOWEST_MULTIPLIER_OPTION = OUTPOST_OPTIONS.lowest
+export const HIGHEST_MULTIPLIER_OPTION = OUTPOST_OPTIONS.highest
 export const DEFAULT_SKILL_LEVEL = 100
 export const MAX_SKILL_LEVEL = 100
 export const FABRICATOR_OPTIONS = {
