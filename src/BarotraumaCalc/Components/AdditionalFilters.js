@@ -102,6 +102,7 @@ const SkillPicker = props => {
     }
 
     return <div style={{
+        position: 'relative',
         margin: 10,
         minWidth: 120,
         flexGrow: 1,
@@ -122,7 +123,15 @@ const SkillPicker = props => {
             value={validateSkill(getParams[getParamName]) === DEFAULT_SKILL_LEVEL ? "" : getParams[getParamName]}
             ref={inputRef}
             onWheel={onWheel}
-        /></div>
+        />
+        {
+            validateSkill(getParams[getParamName]) !== DEFAULT_SKILL_LEVEL ? <span style={{
+                position: "absolute",
+                top: 7,
+                left: 35,
+            }}>{ENGLISH_SKILL_NAMES[props.skill] || props.skill}</span> : <></>
+        }
+    </div>
 }
 
 const UpgradesPicker = props => {
