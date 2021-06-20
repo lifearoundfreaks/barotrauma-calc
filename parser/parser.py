@@ -4,6 +4,7 @@ import json
 import shutil
 
 from collections import defaultdict
+from PIL import Image
 
 used_textures = set()
 
@@ -156,6 +157,7 @@ def save_texture(texture_dir):
 
     file_name = texture_dir.rsplit("/", 1)[-1]
     shutil.copyfile(texture_dir, f"copied_textures/{file_name}")
+    return file_name, list(Image.open(texture_dir).size)
 
 
 game_items = {}
@@ -244,10 +246,16 @@ for key, game_item in game_items.items():
     else:
         game_item['display_name'] = vanilla_names.get(key, key)
 
-with open('parsed_data.json', 'w', encoding='utf8') as outfile:
-    json.dump(game_items, outfile)
-    # json.dump(game_items, outfile, indent=4, ensure_ascii=False)
+
+texture_dimentions = {}
 
 for texture in used_textures:
 
-    save_texture(texture)
+    name, dimentions = save_texture(texture)
+    texture_dimentions[name] = dimentions
+
+with open('parsed_data.json', 'w', encoding='utf8') as outfile:
+    json.dump({
+        'items': game_items,
+        'textures': texture_dimentions
+    }, outfile)  # indent=4, ensure_ascii=False
