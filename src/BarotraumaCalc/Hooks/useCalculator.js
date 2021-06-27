@@ -9,6 +9,7 @@ import validateUpgrades from '../Utils/validateUpgrades'
 import validateStoreBalance from '../Utils/validateStoreBalance'
 import validateDifficultyLevel from '../Utils/validateDifficultyLevel'
 import ClickableItem from '../Components/ClickableItem'
+import getRGB from '../Utils/getRGB'
 import {
     ENGLISH_SKILL_NAMES,
     FABRICATOR_OPTIONS,
@@ -245,9 +246,13 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
         )
     }
 
+    const baseprice = item.price?.default
     const pricesData = LOCATIONAL_OUTPOST_OPTIONS.reduce((result, outpostType) => {
         result[OUTPOST_OPTIONS[outpostType]?.label] = [
-            getBuyingPrice(item, outpostType), getSellingPrice(item, outpostType)
+            getBuyingPrice(item, outpostType),
+            getSellingPrice(item, outpostType),
+            getRGB((baseprice - getBuyingPrice(item, outpostType)) / baseprice * 600),
+            getRGB((getSellingPrice(item, outpostType) - baseprice) / baseprice * 600),
         ]
         return result
     }, {})

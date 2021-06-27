@@ -1,12 +1,8 @@
 import TextureLoader from '../Components/TextureLoader'
 import useGetParams from '../Hooks/useGetParams'
 import { Link } from 'react-router-dom'
+import getRGB from '../Utils/getRGB'
 
-const getRGB = value => {
-    const positive = Math.min(value > 0 ? value : 0, 200)
-    const negative = Math.min(value < 0 ? -value : 0, 200)
-    return `rgb(${255-positive}, ${255-negative}, ${255-negative-positive})`
-}
 
 export default function ClickableItem(props) {
 

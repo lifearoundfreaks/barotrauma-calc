@@ -10,12 +10,12 @@ const TableData = props => {
         </tr> : <></>
 }
 
-const PriceTableData = ({outpost, prices}) => {
-    const [buyingprice, sellingprice] = prices
+const PriceTableData = ({outpost, prices, baseprices}) => {
+    const [buyingprice, sellingprice, buycolor, sellcolor] = prices
     return <tr>
         <td style={{minWidth: 80, padding: 5}}>{outpost}</td>
-        <td style={{minWidth: 40, padding: 5}}>{buyingprice}</td>
-        <td style={{minWidth: 40, padding: 5}}>{sellingprice}</td>
+        <td style={{minWidth: 40, padding: 5, color: buycolor}}>{buyingprice}</td>
+        <td style={{minWidth: 40, padding: 5, color: sellcolor}}>{sellingprice}</td>
     </tr>
 }
 
@@ -74,7 +74,11 @@ const InfoTable = props => {
                 <Table striped bordered hover variant="dark">
                     <tbody>
                         {Object.entries(props.calculator.pricesData).map(
-                            entry => <PriceTableData key={entry[0]} outpost={entry[0]} prices={entry[1]} />
+                            entry => <PriceTableData
+                                key={entry[0]}
+                                outpost={entry[0]}
+                                prices={entry[1]}
+                            />
                         )}
                     </tbody>
                 </Table>
