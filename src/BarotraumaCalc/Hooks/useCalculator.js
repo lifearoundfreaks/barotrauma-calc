@@ -15,6 +15,8 @@ import {
     BASE_MULTIPLIER_OPTION,
     LOWEST_MULTIPLIER_OPTION,
     HIGHEST_MULTIPLIER_OPTION,
+    LOCATIONAL_OUTPOST_OPTIONS,
+    OUTPOST_OPTIONS,
 } from '../globals'
 
 const data = gameData.items
@@ -55,34 +57,35 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
 
     const hasPriceData = item => item.price?.default !== undefined
 
-    const isSoldThere = item => {
+    const isSoldThere = (item, location) => {
+        if (location === undefined) location = outpost
         if (
-            outpost === BASE_MULTIPLIER_OPTION.value ||
-            outpost === LOWEST_MULTIPLIER_OPTION.value ||
-            outpost === HIGHEST_MULTIPLIER_OPTION.value
+            location === BASE_MULTIPLIER_OPTION.value ||
+            location === LOWEST_MULTIPLIER_OPTION.value ||
+            location === HIGHEST_MULTIPLIER_OPTION.value
         ) {
             return item.price?.soldsomewhere === "true"
         }
-        const outpostData = getOutpostData(item, outpost)
+        const outpostData = getOutpostData(item, location)
         return hasPriceData(item) && item.price.minleveldifficulty <= leveldifficulty && (
             (item.price.soldeverywhere !== "false") ||
             (outpostData && (outpostData.sold !== "false"))
         )
     }
 
-    const getBuyingPrice = item => {
-        if (isSoldThere(item)) return Math.max(rnd(
+    const getBuyingPrice = (item, location) => {
+        if (isSoldThere(item, location)) return Math.max(rnd(
             rnd(
-                item.price.default * getOutpostMultiplier(item, outpost)
-            ) * (1 - reputation * .001)
+                item.price.default * getOutpostMultiplier(item, location || outpost)
+            ) * (location === undefined ? (1 - reputation * .001) : 1)
         ), 1)
     }
 
-    const getSellingPrice = item => {
+    const getSellingPrice = (item, location) => {
         if (hasPriceData(item)) return Math.max(rnd(
             rnd(
-                rnd(item.price.default * getOutpostMultiplier(item, destoutpost)) * .8 * sellmultiplier
-            ) * (1 + destreputation * .001)
+                rnd(item.price.default * getOutpostMultiplier(item, location || destoutpost)) * .8
+            ) * (location === undefined ? sellmultiplier * (1 + destreputation * .001) : 1)
         ), 1)
     }
 
@@ -242,8 +245,15 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
         )
     }
 
+    const pricesData = LOCATIONAL_OUTPOST_OPTIONS.reduce((result, outpostType) => {
+        result[OUTPOST_OPTIONS[outpostType]?.label] = [
+            getBuyingPrice(item, outpostType), getSellingPrice(item, outpostType)
+        ]
+        return result
+    }, {})
+
     return {
-        buyingprice, sellingprice,
+        buyingprice, sellingprice, pricesData,
         fabricateTime: (Math.round(100 * getRealFabricationTime(item)) / 100) || undefined,
         fabricationBatch: item.fabrication_batch || 1.,
         deconstructTime: (Math.round(100 * getRealDeconstructionTime(item)) / 100) || undefined,

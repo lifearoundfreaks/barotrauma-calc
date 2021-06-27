@@ -15,6 +15,13 @@ export const OUTPOST_OPTIONS = {
     lowest: { value: 'lowest', label: 'Lowest price' },
     highest: { value: 'highest', label: 'Highest price' },
 }
+export const LOCATIONAL_OUTPOST_OPTIONS = [
+    'city',
+    'outpost',
+    'research',
+    'military',
+    'mine',
+]
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.city
 export const BASE_MULTIPLIER_OPTION = OUTPOST_OPTIONS.base
 export const LOWEST_MULTIPLIER_OPTION = OUTPOST_OPTIONS.lowest

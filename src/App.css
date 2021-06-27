@@ -32,3 +32,10 @@ input:focus{
 .table td {
   vertical-align: middle;
 }
+.nav-link {
+  color: White;
+}
+.nav-link:hover {
+  color: White;
+  border: 0;
+}
