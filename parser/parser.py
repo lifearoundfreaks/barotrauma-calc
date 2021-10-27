@@ -18,8 +18,13 @@ redundant_items = {
     "ceilcomponent", "floorcomponent", "factorialcomponent", "abscomponent",
     "squarerootcomponent", "modulocomponent", "equalscomponent",
     "delaycomponent", "memorycomponent", "lightcomponent90",
-    "signalcheckcomponent", "regexcomponent", "oscillator", "wificomponent"
+    "signalcheckcomponent", "regexcomponent", "oscillator", "wificomponent",
+    "smgrounddepletedfuel",
 }
+complex_recipes = {
+    "depletedfuel",
+}
+unaccounted_complex_recipes = []
 
 
 def parse_items(path):
@@ -32,10 +37,13 @@ def parse_items(path):
     for item in items:
 
         # Removing redundant wires
-        if item.get('identifier') in redundant_items:
+        if (identifier := item.get('identifier')) in redundant_items:
             continue
 
         item_data = {}
+
+        if (variantof := item.get('variantof')):
+            item_data['variantof'] = variantof
 
         if (price := item.find('Price')) is not None:
             default_price = float(price.attrib['baseprice'])
@@ -76,8 +84,16 @@ def parse_items(path):
             })
             item_data['price'] = price_data
 
-        recipe, refill_recipe, *_ = (*item.findall('Fabricate'), None, None)
+        recipe, refill_recipe, *extra_recipes = (
+            *item.findall('Fabricate'), None, None
+        ) if identifier not in complex_recipes else (
+            item.find('Fabricate'), None, None
+        )
         if recipe is not None:
+            if (requiresrecipe := recipe.attrib.get(
+                'requiresrecipe', False
+            )): 
+                item_data['requiresrecipe'] = requiresrecipe
             quantities = defaultdict(float)
             batch = float(recipe.attrib.get('amount', 1.))
             for ingredient in [
@@ -103,7 +119,7 @@ def parse_items(path):
                 item_data['fabricate_time'] = \
                     round(int(recipe.attrib.get('requiredtime', 1)) / batch, 2)
                 item_data['fabricator_types'] = \
-                    recipe.attrib['suitablefabricators']
+                    recipe.attrib.get('suitablefabricators', '')
                 item_data['fabrication_batch'] = batch
                 if skills:
                     item_data['skills'] = skills
@@ -133,25 +149,39 @@ def parse_items(path):
             for ingredient in [
                 *recipe.findall('Item'), *recipe.findall('RequiredItem')
             ]:
-                amount = float(ingredient.attrib.get('outcondition', 1))*batch
-                if chooserandom:
-                    amount *= \
-                        float(ingredient.attrib['commonness']) / total_weight
+                if (
+                    outconditionmin := ingredient.attrib.get('outconditionmin')
+                ) is not None:
+                    outconditionmax = ingredient.attrib.get('outconditionmax')
+                    amount = round(
+                        (float(outconditionmin) + float(outconditionmax)) / 2,
+                        2
+                    )
+                else:
+                    amount = float(
+                        ingredient.attrib.get('outcondition', 1)
+                    ) * batch
+                    if chooserandom:
+                        amount *= float(
+                            ingredient.attrib['commonness']
+                        ) / total_weight
 
                 quantities[ingredient.attrib['identifier']] += round(
                     amount, 2)
 
             if quantities:
                 item_data['deconstruct'] = quantities
-                item_data['deconstruct_time'] = recipe.attrib['time']
+                item_data['deconstruct_time'] = recipe.attrib.get('time', 1)
                 item_data['random_deconstruction'] = chooserandom
 
         if item_data:
+            if not not list(filter(None, extra_recipes)):
+                unaccounted_complex_recipes.append(item.attrib['identifier'])
             parsed_items[item.attrib['identifier']] = item_data
 
-            sprite = item.find('InventoryIcon')
-            if sprite is None:
-                sprite = item.find('Sprite')
+            sprite = item.find('InventoryIcon') or item.find('Sprite')
+            if sprite is None and 'variantof' in item_data:
+                continue
 
             split_dir = sprite.attrib['texture'].rsplit('/', 1)
             if len(split_dir) > 1:
@@ -159,9 +189,19 @@ def parse_items(path):
             else:
                 texture_dir = path.rsplit("/", 1)[0] + "/" + split_dir[0]
 
+            sourcerect = sprite.attrib.get('sourcerect')
+            if sourcerect is None and 'sheetindex' in sprite.attrib:
+                X, Y = map(int, sprite.attrib['sheetindex'].split(","))
+                sizeX, sizeY = map(
+                    int, sprite.attrib['sheetelementsize'].split(",")
+                )
+                sourcerect = ",".join(map(str, (
+                    sizeX * X, sizeY * Y, sizeX, sizeY
+                )))
+
             used_textures.add(texture_dir)
             item_data['texture'] = texture_dir.rsplit('/', 1)[-1]
-            item_data['sourcerect'] = sprite.attrib['sourcerect']
+            item_data['sourcerect'] = sourcerect
 
     return parsed_items
 
@@ -219,6 +259,26 @@ for key, item in game_items.items():
             if 'scrapped_from' not in ingredient_dict:
                 ingredient_dict['scrapped_from'] = {}
             ingredient_dict['scrapped_from'][parsed_key] = round(1 / amount, 2)
+
+    for identifier, item_data in game_items.items():
+
+        if (variantof := item_data.get('variantof')) is not None:
+
+            sourceitem = game_items.get(variantof, {})
+
+            for key, value in sourceitem.items():
+
+                if item_data.get(key) is None:
+
+                    item_data[key] = value
+
+if unaccounted_complex_recipes:
+    raise ValueError(
+        f"Items with identifiers {unaccounted_complex_recipes} had more than 2"
+        " fabrication recipes available and were not accounted for. Add them "
+        "to either 'redundant_items' or 'complex_recipes' variable. In the "
+        "latter case, only first recipe will be included."
+    )
 
 translations = defaultdict(set)
 TRANSLATIONS_FOLDER = 'Content/Texts'

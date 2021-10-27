@@ -374,5 +374,6 @@ export default function useCalculator(identifier) {
             sourcerect={item.sourcerect}
             margin={0}
         />,
+        requiresrecipe: item.requiresrecipe && "yes",
     }
 }

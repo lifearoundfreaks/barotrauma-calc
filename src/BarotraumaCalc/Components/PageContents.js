@@ -45,13 +45,13 @@ const InfoTable = props => {
             <Tab eventKey="main-tab" title="Main" style={{ backgroundColor: "black" }}>
                 <Table striped bordered hover variant="dark">
                     <tbody>
+                        <TableData value={props.calculator.requiresrecipe}>Requires recipe</TableData>
                         <TableData value={props.calculator.tradingProfit}>Trading margin</TableData>
                         <TableData value={props.calculator.buyingprice}>Buying price</TableData>
                         <TableData value={props.calculator.sellingprice}>Selling price</TableData>
                         <TableData value={props.calculator.minAmt}>Minimal amount sold at departure</TableData>
                         <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Departure multiplier</TableData>
                         <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
-
                     </tbody>
                 </Table>
             </Tab>
