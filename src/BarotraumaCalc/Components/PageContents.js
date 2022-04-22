@@ -114,8 +114,8 @@ export default function PageContents() {
             <Col><h4>{calculatorResults.displayName}</h4></Col>
         </Row>
         <Row className="mt-3">
-            <Col md={4} className="mb-3"><InfoTable calculator={calculatorResults} /></Col>
-            <Col md={8}>
+            <Col md={5} className="mb-3"><InfoTable calculator={calculatorResults} /></Col>
+            <Col md={7}>
                 {calculatorResults.fabricationBlock}
                 {calculatorResults.deconstuctionBlock}
                 {calculatorResults.usedinBlock}
