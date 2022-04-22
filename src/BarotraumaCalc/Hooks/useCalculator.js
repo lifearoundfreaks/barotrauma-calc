@@ -62,7 +62,7 @@ const calculateItem = (item, outpost, reputation, destoutpost, destreputation, f
                             multiplier > result.max_multiplier
                         ) ? multiplier : result.max_multiplier,
                         min_buy_multiplier: (
-                            result.sold === "true" && (result.min_buy_multiplier === undefined || multiplier < result.min_buy_multiplier)
+                            sold === "true" && (result.min_buy_multiplier === undefined || multiplier < result.min_buy_multiplier)
                         ) ? multiplier : result.min_buy_multiplier,
                         sold: result.sold === "true" ? result.sold : sold
                     } : result
