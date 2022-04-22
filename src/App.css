@@ -39,3 +39,8 @@ input:focus{
   color: White;
   border: 0;
 }
+.locked-recipe-craftable {
+  fill: red;
+  position: absolute;
+  margin: 0 -20px;
+}
