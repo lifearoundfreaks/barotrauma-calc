@@ -47,35 +47,34 @@ def parse_items(path):
 
         if (price := item.find('Price')) is not None:
             default_price = float(price.attrib['baseprice'])
-            soldeverywhere = price.attrib.get('soldeverywhere', 'true')
+            soldeverywhere = price.attrib.get('sold', 'true')
             minleveldifficulty = float(price.attrib.get('minleveldifficulty', 0))
             modified_dict = {}
             price_data = {
                 'default': default_price,
-                'soldeverywhere': soldeverywhere,
                 'modified': modified_dict,
                 'minleveldifficulty': minleveldifficulty,
             }
 
-            soldsomewhere = soldeverywhere
+            soldsomewhere = 'false'
             max_multiplier = min_multiplier = 1
             for subprice in price:
                 local_multiplier = float(subprice.attrib.get('multiplier', 1))
                 max_multiplier = max(max_multiplier, local_multiplier)
                 min_multiplier = min(min_multiplier, local_multiplier)
-                modified_dict[subprice.attrib['locationtype']] = {
+                modified_dict[subprice.attrib['storeidentifier']] = {
                     'multiplier': local_multiplier,
                 }
                 min_amt = int(subprice.attrib.get('minavailable', 0))
                 if min_amt:
-                    modified_dict[subprice.attrib['locationtype']][
+                    modified_dict[subprice.attrib['storeidentifier']][
                         'min_amt'] = min_amt
-                if soldeverywhere != 'true':
-                    sold_there = subprice.attrib.get('sold', 'true')
-                    if sold_there == 'true':
-                        soldsomewhere = True
-                    modified_dict[subprice.attrib['locationtype']]['sold'] = \
-                        sold_there
+
+                sold_there = subprice.attrib.get('sold', soldeverywhere)
+                if sold_there == 'true':
+                    soldsomewhere = 'true'
+                modified_dict[subprice.attrib['storeidentifier']]['sold'] = \
+                    sold_there
 
             price_data.update({
                 'soldsomewhere': soldsomewhere,

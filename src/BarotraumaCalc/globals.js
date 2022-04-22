@@ -22,6 +22,45 @@ export const LOCATIONAL_OUTPOST_OPTIONS = [
     'military',
     'mine',
 ]
+export const LOCATION_MERCHANTS = {
+    city: new Set([
+        'merchantcity',
+        'merchantarmory',
+        'merchantmedical',
+        'merchantengineering',
+    ]),
+    outpost: new Set([
+        'merchantoutpost',
+        'merchantmedical',
+        'merchantengineering',
+    ]),
+    research: new Set([
+        'merchantresearch',
+        'merchantmedical',
+        'merchantengineering',
+    ]),
+    military: new Set([
+        'merchantmilitary',
+        'merchantarmory',
+        'merchantmedical',
+        'merchantengineering',
+    ]),
+    mine: new Set([
+        'merchantmine',
+        'merchantmedical',
+        'merchantengineering',
+    ]),
+}
+export const SHOP_NAMES = {
+    'merchantcity': 'General',
+    'merchantoutpost': 'General',
+    'merchantresearch': 'General',
+    'merchantmilitary': 'General',
+    'merchantmine': 'General',
+    'merchantarmory': 'Armory',
+    'merchantmedical': 'Medical',
+    'merchantengineering': 'Engineering',
+}
 export const DEFAULT_OUTPOST_OPTION = OUTPOST_OPTIONS.city
 export const BASE_MULTIPLIER_OPTION = OUTPOST_OPTIONS.base
 export const LOWEST_MULTIPLIER_OPTION = OUTPOST_OPTIONS.lowest

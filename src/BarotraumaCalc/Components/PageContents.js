@@ -47,11 +47,22 @@ const InfoTable = props => {
                     <tbody>
                         <TableData value={props.calculator.requiresrecipe}>Requires recipe</TableData>
                         <TableData value={props.calculator.tradingProfit}>Trading margin</TableData>
-                        <TableData value={props.calculator.buyingprice}>Buying price</TableData>
-                        <TableData value={props.calculator.sellingprice}>Selling price</TableData>
+                        <TableData value={props.calculator.buyingprice}>Buying price (best)</TableData>
+                        <TableData value={props.calculator.sellingprice}>Selling price (best)</TableData>
                         <TableData value={props.calculator.minAmt}>Minimal amount sold at departure</TableData>
-                        <TableData value={props.calculator.outpostmultiplier} missingValue={1}>Departure multiplier</TableData>
-                        <TableData value={props.calculator.destoutpostmultiplier} missingValue={1}>Destination multiplier</TableData>
+                        <TableData value={props.calculator.whereSold}>Sold at</TableData>
+                        <TableData
+                            value={props.calculator.outpostmultiplier.min === props.calculator.outpostmultiplier.max
+                                ? props.calculator.outpostmultiplier.min :
+                                `${props.calculator.outpostmultiplier.min}-${props.calculator.outpostmultiplier.max}`}
+                            missingValue={1}
+                        >Departure multiplier</TableData>
+                        <TableData
+                            value={props.calculator.destoutpostmultiplier.min === props.calculator.destoutpostmultiplier.max
+                                ? props.calculator.destoutpostmultiplier.min :
+                                `${props.calculator.destoutpostmultiplier.min}-${props.calculator.destoutpostmultiplier.max}`}
+                            missingValue={1}
+                        >Destination multiplier</TableData>
                     </tbody>
                 </Table>
             </Tab>
@@ -70,9 +81,13 @@ const InfoTable = props => {
                 </Table>
             </Tab>
 
-            <Tab eventKey="prices-tab" title="Prices">
+            <Tab eventKey="prices-tab" title="Prices (best)">
                 <Table striped bordered hover variant="dark">
                     <tbody>
+                        <PriceTableData
+                            key={"head"}
+                            prices={["Buy", "Sell"]}
+                        />
                         {Object.entries(props.calculator.pricesData).map(
                             entry => <PriceTableData
                                 key={entry[0]}
